@@ -51,7 +51,7 @@ const ContactOne = () => {
                                     <input
                                         type="checkbox"
                                         id="subscribe"
-                                        className="h-4 w-4  border-gray-300 rounded focus:ring-indigo-500"
+                                        className="h-4 w-4 bg-[#e2ebf7]  border-gray-300 rounded focus:ring-indigo-500"
                                     />
                                     <label htmlFor="subscribe" className="ml-2 block text-[10px] text-primary font-medium lg:text-[13px]">
                                         I agree to receive emails, newsletters and promotional messages.

@@ -77,7 +77,7 @@ const TransferForm = ({ type }: TransferFormProps) => {
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         required
-                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-[#e2ebf7]  sm:text-sm"
                     />
                 </div>
                 <div>
@@ -99,7 +99,7 @@ const TransferForm = ({ type }: TransferFormProps) => {
                         value={recipientName}
                         onChange={(e) => setRecipientName(e.target.value)}
                         required
-                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md bg-[#e2ebf7] shadow-sm  sm:text-sm"
                     />
                 </div>
                 <div>
@@ -109,7 +109,7 @@ const TransferForm = ({ type }: TransferFormProps) => {
                         value={recipientAccount}
                         onChange={(e) => setRecipientAccount(e.target.value)}
                         required
-                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-[#e2ebf7] sm:text-sm"
                     />
                 </div>
                 {type !== 'Local' && (
@@ -121,7 +121,7 @@ const TransferForm = ({ type }: TransferFormProps) => {
                                 value={recipientBank}
                                 onChange={(e) => setRecipientBank(e.target.value)}
                                 required
-                                className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                                className="mt-1 bg-[#e2ebf7] focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
                             />
                         </div>
                         {type === 'International' && (
@@ -133,7 +133,7 @@ const TransferForm = ({ type }: TransferFormProps) => {
                                         value={swiftCode}
                                         onChange={(e) => setSwiftCode(e.target.value)}
                                         required
-                                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 bg-[#e2ebf7] rounded-md shadow-sm  sm:text-sm"
                                     />
                                 </div>
                                 <div>
@@ -143,7 +143,7 @@ const TransferForm = ({ type }: TransferFormProps) => {
                                         value={iban}
                                         onChange={(e) => setIban(e.target.value)}
                                         required
-                                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 bg-[#e2ebf7] rounded-md shadow-sm  sm:text-sm"
                                     />
                                 </div>
                                 <div>
@@ -153,7 +153,7 @@ const TransferForm = ({ type }: TransferFormProps) => {
                                         value={bankAddress}
                                         onChange={(e) => setBankAddress(e.target.value)}
                                         required
-                                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                                        className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 bg-[#e2ebf7] rounded-md shadow-sm  sm:text-sm"
                                     />
                                 </div>
                             </>
