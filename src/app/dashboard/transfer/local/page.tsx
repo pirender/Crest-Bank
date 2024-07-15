@@ -3,7 +3,7 @@ import React from 'react'
 
 const page = () => {
     return (
-        <div className='pt-16 md:pt-0 md:pb-0 pb-[100px]'>
+        <div className='pt-16 md:pt-0 md:pb-0 pb-[300px]'>
             <TransferForm type='Local' />
         </div>
     )

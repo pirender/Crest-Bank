@@ -85,7 +85,7 @@ const TransferForm = ({ type }: TransferFormProps) => {
                     <select
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                        className="mt-1 block w-full p-2 border border-gray-300 bg-[#e2ebf7] rounded-md shadow-sm  sm:text-sm"
                     >
                         <option value="USD">USD</option>
                         <option value="GBP">GBP</option>
