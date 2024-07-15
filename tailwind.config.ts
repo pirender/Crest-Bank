@@ -9,12 +9,25 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        'wave-pattern': "url('/wave.svg')",
+      },
+      container: {
+        screens: {
+          lg: '1000px', // Custom max-width for large screens
+        },
+      },
+      colors: {
+        primary: "#004080",
+        secondary: "#00b3b3",
+        accent: '#ffc103',
+        neutral: "#f2f2f2",
+        text: "#333333",
+        // Add more custom colors here
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('daisyui'),
+  ],
 };
 export default config;

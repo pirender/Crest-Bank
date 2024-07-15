@@ -2,32 +2,116 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.mycontainer {
+  max-width: 320px;
+  margin: 0 auto;
 }
 
+.amount {
+  color: #38a20e;
+  text-shadow: 1.452px 5.822px 8.64px rgba(56, 162, 14, 0.4);
+}
+
+.title-span {
+  background: linear-gradient(-90deg, #e83b99 0%, #e28e6f 100%);
+    background-clip: border-box;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  text-shadow: 1.247px 5.869px 3px rgba(232, 58, 153, 0.3);
+}
+
+.slider {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.right{
+  flex: 1 auto;
+}
+
+html,
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #e2ebf7;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+html{
+  scroll-behavior: smooth;
+}
+
+.navCon {
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.navConn {
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.navConnn {
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+@media only screen and (max-width: 690px) {
+  .mycontainer {
+    max-width: 350px;
   }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 690px) {
+  .mycontainer {
+    max-width: 420px;
+  }
+
+}
+@media only screen and (min-width: 320px) and (max-width: 350px) {
+  .hero-text {
+    font-size: 25px;
+  }
+
+  .modal-p{
+    font-size: 10px;
+  }
+
+  .svg {
+    width: 120px;
+    height: 48px;
+  }
+}
+
+@media only screen and (min-width: 690px) and (max-width: 1023px) {
+  .mycontainer {
+    max-width: 600px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .mycontainer {
+    max-width: 1100px;
+  }
+
+  .navCon {
+    max-width: 1000px;
+  }
+
+  .navConnn {
+    max-width: 700px;
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #01BC7F,  #01EEA0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

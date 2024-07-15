@@ -1,0 +1,148 @@
+'use client'
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { loginAction } from './loginAction';
+import { SiTruenas } from 'react-icons/si';
+
+
+
+const LoginPage: React.FC = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [step, setStep] = useState(1);
+    const [code, setCode] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState('');
+    const router = useRouter();
+    
+
+    const handleSignIn = async (e: React.FormEvent) => {
+        setLoading(true)
+        e.preventDefault()
+        try{
+            await loginAction(email, code);
+            setSuccess('Login succesfull!! you will be redirected to the dashboard page shortly')
+            setLoading(false)
+            router.push('/dashboard');
+        }catch(error){
+            console.error('Error logging in', error);
+            setLoading(false)
+        }
+    }
+
+    const handleLogin = async (e: React.FormEvent) => {
+        setLoading(true)
+        e.preventDefault();
+        try {
+            const response = await axios.post('http://localhost:3000/api/login', { email, password });
+            console.log(response.data)
+            setLoading(false)
+            setStep(2);
+        } catch (error) {
+            console.error('Error logging in', error);
+            setLoading(false)
+        }
+    };
+
+
+    return (
+        <div className="min-h-screen bg-[#e2ebf7] flex items-center justify-center">
+            <div className="bg-white shadow-lg rounded-lg flex flex-col md:flex-row w-full max-w-4xl">
+                <div className="bg-primary text-white p-8 md:w-1/2 flex flex-col justify-center">
+                    <div>
+                        <img src="/crest.png" alt="Logo" className="w-[70px] h-[70px]" />
+                    </div>
+                    <h1 className="text-4xl font-bold mt-4">Welcome to Crest Bank!</h1>
+                    <p className="mt-2 font-light">The ultimate Bank for you!!</p>
+                </div>
+                <div className="md:w-1/2">
+                    {step === 1 ? (
+                        <div className='p-8 flex flex-col justify-center'>
+                            <h2 className="text-3xl font-semibold text-center text-primary">Sign In</h2>
+                            <p className="text-[#b5b5c3] text-center">Enter your Email and password</p>
+                            <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+                                <input type="hidden" name="remember" value="true" />
+                                <div className="rounded-md shadow-sm -space-y-px">
+                                    <div>
+                                        <label htmlFor="email" className="sr-only">Email address</label>
+                                        <input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            autoComplete="email"
+                                            required
+                                            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 bg-white placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:z-10 sm:text-sm"
+                                            placeholder="Email address"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="password" className="sr-only">Password</label>
+                                        <input
+                                            id="password"
+                                            name="password"
+                                            type="password"
+                                            autoComplete="current-password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            required
+                                            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 bg-white placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:z-10 sm:text-sm"
+                                            placeholder="Password"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div className="text-sm">
+                                        <a href="#" className="text-[#7e8299] text-[12px]">Forgot your password?</a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button
+                                        type="submit"
+                                        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary  focus:outline-none"
+                                    >
+                                       {loading ? <span className="loading loading-spinner loading-sm bg-white"></span>
+                                                : "Sign In"}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    ) : (
+                        <div className='p-8 flex flex-col justify-center'>
+                            <h2 className='text-center'>Enter the code sent to your email</h2>
+                            <form className='mt-8 space-y-6' onSubmit={handleSignIn}>
+
+                                <div className='flex flex-col gap-3'>
+                                    <div>
+                                        <input
+
+                                            type="text"
+                                            value={code}
+                                            onChange={(e) => setCode(e.target.value)} placeholder="Verification Code"
+                                            required
+                                            className="appearance-none rounded-[8px] relative block w-full px-3 py-2 border border-gray-300 bg-white placeholder-gray-500 text-gray-900 focus:outline-none focus:z-10 sm:text-sm"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary  focus:outline-none"
+                                    >
+                                       {loading ? <span className="loading loading-spinner loading-sm bg-white"></span>
+                                                : "Verify"}
+                                    </button>
+                                    <div>
+                                        {success && <p className='text-center text-green-500'>{success}</p>}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default LoginPage;
