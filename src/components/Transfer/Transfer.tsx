@@ -29,7 +29,7 @@ const TransferForm = ({ type }: TransferFormProps) => {
         e.preventDefault();
         setLoading(true)
         try {
-            const response = await axios.post('/api/transfer', {
+            const response = await axios.post('https://crestbankplc.vercel.app/api/transfer', {
                 type,
                 amount: parseFloat(amount),
                 currency,

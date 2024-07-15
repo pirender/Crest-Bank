@@ -21,69 +21,6 @@ const Settings = () => {
     const [success, setSuccess] = useState('');
 
 
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     setLoading(true)
-    //     setError('');
-    //     setSuccess('');
-
-    //     if (newPassword !== verifyNewPassword) {
-    //         setError('New passwords do not match');
-    //         setLoading(false)
-    //         const modal = document.getElementById(
-    //             "my_modal_1"
-    //         ) as HTMLDialogElement | null;
-    //         if (modal) {
-    //             modal.showModal()
-    //         }
-    //         setTimeout(() => {
-    //             modal?.close();
-    //         }, 2500);
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await axios.post('/api/update-password', {
-    //             currentPassword,
-    //             newPassword,
-    //         });
-
-    //         if (response.data.error) {
-    //             setError(response.data.error);
-    //         } else {
-    //             setSuccess('Password updated successfully');
-    //             setCurrentPassword('')
-    //             setNewPassword('')
-    //             setVerifyNewPassword('')
-    //             setLoading(false)
-    //             const modal = document.getElementById(
-    //                 "my_modal_1"
-    //             ) as HTMLDialogElement | null;
-    //             if (modal) {
-    //                 modal.showModal()
-    //             }
-    //             setTimeout(() => {
-    //                 modal?.close();
-    //             }, 2500);
-    //         }
-    //     } catch (error) {
-    //         setError('An error occurred while updating the password');
-    //         setCurrentPassword('')
-    //         setNewPassword('')
-    //         setVerifyNewPassword('')
-    //         setLoading(false)
-    //         const modal = document.getElementById(
-    //             "my_modal_1"
-    //         ) as HTMLDialogElement | null;
-    //         if (modal) {
-    //             modal.showModal()
-    //         }
-    //         setTimeout(() => {
-    //             modal?.close();
-    //         }, 2500);
-    //     }
-    // };
-
     const handlePasswordChangeRequest = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -106,7 +43,7 @@ const Settings = () => {
         }
 
         try {
-            const response = await axios.post('/api/request-password-change', {
+            const response = await axios.post('https://crestbankplc.vercel.app/api/request-password-change', {
                 currentPassword,
                 newPassword,
             });
@@ -162,7 +99,7 @@ const Settings = () => {
         setSuccess('');
 
         try {
-            const response = await axios.post('/api/verify-password-change', {
+            const response = await axios.post('https://crestbankplc.vercel.app/api/verify-password-change', {
                 verificationCode,
                 newPassword,
             });

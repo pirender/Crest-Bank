@@ -7,7 +7,7 @@ import useSWR, { mutate } from 'swr';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const Profile = () => {
-    const { data, error } = useSWR("/api/get-user", fetcher);
+    const { data, error } = useSWR("https://crestbankplc.vercel.app/api/get-user", fetcher);
     const [updateError, setUpdateError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);

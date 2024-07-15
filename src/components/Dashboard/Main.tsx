@@ -34,8 +34,8 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 
 const Main = () => {
-    const { data } = useSWR("/api/transactions", fetcher);
-    const { data: user } = useSWR("/api/get-user", fetcher);
+    const { data } = useSWR("https://crestbankplc.vercel.app/api/transactions", fetcher);
+    const { data: user } = useSWR("https://crestbankplc.vercel.app/api/get-user", fetcher);
 
     return (
         <div className='md:pt-6 pt-4 pb-32'>

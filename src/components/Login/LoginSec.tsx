@@ -1,9 +1,8 @@
 'use client'
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { loginAction } from './loginAction';
-import { SiTruenas } from 'react-icons/si';
 
 
 
@@ -35,7 +34,7 @@ const LoginPage: React.FC = () => {
         setLoading(true)
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3000/api/login', { email, password });
+            const response = await axios.post('https://crestbankplc.vercel.app/api/login', { email, password });
             console.log(response.data)
             setLoading(false)
             setStep(2);
