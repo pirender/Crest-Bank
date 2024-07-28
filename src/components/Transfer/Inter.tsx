@@ -139,7 +139,7 @@ const Inter = () => {
     }
 
     return (
-        <div className='pt-6'>
+        <div className={`pt-6 ${step === 2 ? 'lg:pb-0 pb-[600px]' : ''}`}>
             {step === 1 ? (<div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-semibold mb-6 text-primary">International Transfer</h3>
                 <form onSubmit={setStepFunc} className="space-y-4">
