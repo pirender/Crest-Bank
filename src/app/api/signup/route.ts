@@ -1,6 +1,5 @@
 import { users } from '@/lib/airtable';
-import { NextApiRequest, NextApiResponse } from 'next';
-import formidable from 'formidable';
+
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({

@@ -1,5 +1,5 @@
 import { auth } from '../../../../auth';
-import { transactionsTable, usersTable } from '@/lib/airtable';
+import { transactions, users } from '@/lib/airtable';
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
   try {
     // Find the user in the database
-    const userRecords = await usersTable.select({ filterByFormula: `{id} = '${session.user.id}'` }).firstPage();
+    const userRecords = await users.select({ filterByFormula: `{id} = '${session.user.id}'` }).firstPage();
     if (userRecords.length === 0) {
       return Response.json({ error: 'User not found' }, { status: 404 });
     }
@@ -32,19 +32,19 @@ export async function POST(request: Request) {
         return Response.json({ error: 'Insufficient balance' }, { status: 400 });
       }
       newBalance = balanceUSD - amount;
-      await usersTable.update([{ id: user.id, fields: { balance_usd: newBalance } }]);
+      await users.update([{ id: user.id, fields: { balance_usd: newBalance } }]);
     } else if (currency === 'GBP') {
       if (balanceGBP < amount) {
         return Response.json({ error: 'Insufficient balance' }, { status: 400 });
       }
       newBalance = balanceGBP - amount;
-      await usersTable.update([{ id: user.id, fields: { balance_gbp: newBalance } }]);
+      await users.update([{ id: user.id, fields: { balance_gbp: newBalance } }]);
     } else if (currency === 'EUR') {
       if (balanceEUR < amount) {
         return Response.json({ error: 'Insufficient balance' }, { status: 400 });
       }
       newBalance = balanceEUR - amount;
-      await usersTable.update([{ id: user.id, fields: { balance_eur: newBalance } }]);
+      await users.update([{ id: user.id, fields: { balance_eur: newBalance } }]);
     }
 
     // Save the transaction
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       status: 'successful',
     };
 
-    const result = await transactionsTable.create([{ fields: transaction }]);
+    const result = await transactions.create([{ fields: transaction }]);
     console.log(result)
 
     return Response.json({ message: 'Transfer successful', newBalance }, { status: 200 });
