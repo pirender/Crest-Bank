@@ -34,8 +34,7 @@ const LoginPage: React.FC = () => {
         setLoading(true)
         e.preventDefault();
         try {
-            const response = await axios.post('https://crestbankplc.vercel.app/api/login', { email, password });
-            console.log(response.data)
+            const response = await axios.post('/api/login', { email, password });
             setLoading(false)
             setStep(2);
         } catch (error) {
@@ -95,6 +94,10 @@ const LoginPage: React.FC = () => {
                                 <div className="flex items-center justify-between">
                                     <div className="text-sm">
                                         <a href="#" className="text-[#7e8299] text-[12px]">Forgot your password?</a>
+                                    </div>
+
+                                    <div>
+                                        <a href="/signup" className='text-primary text-[12px]'>Create new account</a>
                                     </div>
                                 </div>
                                 <div>

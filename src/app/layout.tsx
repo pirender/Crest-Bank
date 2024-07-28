@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import Providers from "./Provider";
 
-const inter = Montserrat({ subsets: ["latin"] });
+const inter = Poppins({ weight: ["100",'200', '300', '400','500', '600', '700', '800', '900'], subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: "Crest Bank | We Present Crest Bank",

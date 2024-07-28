@@ -1,4 +1,4 @@
-import { usersTable } from '@/lib/airtable';
+import { users } from '@/lib/airtable';
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const { email, password } = await request.json();
 
     try {
-        const records = await usersTable.select({
+        const records = await users.select({
             filterByFormula: `{email} = '${email}'`,
         }).firstPage();
 
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
         }
 
         const verificationCode = Math.floor(100000 + Math.random() * 900000);
-        await usersTable.update(user.id, { verificationCode });
+        await users.update(user.id, { verificationCode });
 
         const mailOptions = {
             from: `Crest Bank ${process.env.MY_EMAIL}`,
@@ -53,6 +53,7 @@ export async function POST(request: Request) {
             return Response.json({ error: "Error logging in user." }, { status: 500 });
         }
     } catch (error) {
+        console.log(error)
         return Response.json({ error: error });
     }
 }

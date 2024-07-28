@@ -1,4 +1,4 @@
-import { usersTable } from "@/lib/airtable";
+import { users } from "@/lib/airtable";
 import { auth } from "../../../../auth";
 import nodemailer from 'nodemailer';
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const { currentPassword, newPassword } = await request.json();
 
     try {
-        const records = await usersTable.select({
+        const records = await users.select({
             filterByFormula: `{id} = '${session.user.id}'`,
         }).firstPage();
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
         const verificationCode = Math.floor(100000 + Math.random() * 900000);
 
-        await usersTable.update([
+        await users.update([
             {
                 id: records[0].id,
                 fields: { verificationCode },

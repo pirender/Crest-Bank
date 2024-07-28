@@ -4,7 +4,7 @@ import useSWR from 'swr';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const Image = () => {
-    const { data, error } = useSWR("https://crestbankplc.vercel.app/api/get-user", fetcher);
+    const { data, error } = useSWR("/api/get-user", fetcher);
 
     return (
 

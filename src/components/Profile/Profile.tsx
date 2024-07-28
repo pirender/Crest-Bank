@@ -1,25 +1,22 @@
 'use client'
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useSession } from 'next-auth/react'
-import React, { useState, useEffect } from 'react'
 import useSWR, { mutate } from 'swr';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const Profile = () => {
-    const { data, error } = useSWR("https://crestbankplc.vercel.app/api/get-user", fetcher);
+    const { data, error } = useSWR("/api/get-user", fetcher);
     const [updateError, setUpdateError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const inputFileRef = useRef<HTMLInputElement>(null);
 
-
-    const session = useSession().data?.user
     const [userDetails, setUserDetails] = useState({
         first_name: '',
         last_name: '',
         dob: '',
         img: '',
-        username: '',
         phone: '',
         email: '',
         country: '',
@@ -29,13 +26,11 @@ const Profile = () => {
     });
 
     useEffect(() => {
-
         if (data) {
             setUserDetails({
                 first_name: data?.first_name || '',
                 last_name: data?.last_name || '',
                 dob: data?.dob || '',
-                username: data?.username || '',
                 phone: data?.phone || '',
                 email: data?.email || '',
                 country: data?.country || '',
@@ -55,16 +50,62 @@ const Profile = () => {
         }));
     };
 
+    const handleImageUpload = async (): Promise<string | null> => {
+        if (!inputFileRef.current?.files) {
+            throw new Error("No file selected");
+        }
+
+        const file = inputFileRef.current.files[0];
+
+        const response = await fetch(
+            `/api/upload-image?filename=${file.name}`,
+            {
+                method: 'POST',
+                body: file,
+            }
+        );
+
+        const newBlob = await response.json();
+        return newBlob?.url ?? null;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('/api/update-user', userDetails);
+            setLoading(true);
+            let newImageUrl: string | null = null;
+
+            if (inputFileRef.current?.files?.length) {
+                newImageUrl = await handleImageUpload();
+
+                if (newImageUrl) {
+                    const res = await fetch(`/api/delete-image?filename=${userDetails.img}`, {
+                        method: 'DELETE',
+                    });
+
+                    if (!res.ok) {
+                        setUpdateError('Failed to delete old image. Please try again.');
+                        setLoading(false);
+                        return;
+                    }
+                }
+            }
+
+            const updatedDetails = {
+                ...userDetails,
+                img: newImageUrl ?? userDetails.img,
+                timestamp: Date.now(),
+            };
+
+            setUserDetails(updatedDetails);
+
+            const response = await axios.post('/api/update-user', updatedDetails);
             if (response.data.error) {
                 setUpdateError(response.data.error);
             } else {
                 setSuccess('Account updated successfully');
-                setLoading(false)
+                setLoading(false);
                 setUserDetails((prevDetails) => ({
                     ...prevDetails,
                     timestamp: Date.now(),
@@ -72,8 +113,9 @@ const Profile = () => {
                 mutate("/api/get-user");
             }
         } catch (error) {
-            setUpdateError('An error occurred while updating the password');
-            setLoading(false)
+            console.log(error);
+            setUpdateError('An error occurred while updating the profile.');
+            setLoading(false);
         }
     };
 
@@ -91,8 +133,6 @@ const Profile = () => {
                             <div>
                                 <h4 className='font-bold text-[14px]'>Customer Info:</h4>
                             </div>
-
-
 
                             <div className='flex flex-col gap-4'>
                                 <div className='w-[120px] h-[120px] rounded-full'>
@@ -114,16 +154,9 @@ const Profile = () => {
                                     </div >
 
                                     <div className='flex flex-col gap-2'>
-                                        <label htmlFor="" className='text-[13px] font-medium'>Username</label>
-                                        <div>
-                                            <input type="text" name='username' value={userDetails.username} onChange={handleInputChange} className='bg-[#e2ebf7] w-full p-1 rounded-[4px] pl-3 text-[14px] focus:outline-none' />
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col gap-2'>
                                         <label htmlFor="" className='text-[13px] font-medium'>Profile Picture</label>
                                         <div>
-                                            <input type="text" name='img' value={userDetails.img} onChange={handleInputChange} className='bg-[#e2ebf7] w-full p-1 rounded-[4px] pl-3 text-[14px] focus:outline-none' />
+                                            <input type="file" ref={inputFileRef} className='bg-[#e2ebf7] w-full p-1 rounded-[4px] pl-3 text-[14px] focus:outline-none' />
                                         </div>
                                     </div>
                                     <div className='flex flex-col gap-2'>
@@ -190,8 +223,6 @@ const Profile = () => {
                 </div>
             </div>
 
-            {/*  */}
-
             <div className="hidden md:block">
                 <div className="px-4">
                     <div>
@@ -204,8 +235,6 @@ const Profile = () => {
                             <div>
                                 <h4 className='font-bold text-[14px]'>Customer Info:</h4>
                             </div>
-
-
 
                             <div className='flex flex-col gap-4'>
                                 <div className='w-[120px] h-[120px] rounded-full'>
@@ -226,15 +255,9 @@ const Profile = () => {
                                         </div>
                                     </div >
                                     <div className='flex flex-col gap-2'>
-                                        <label htmlFor="" className='text-[13px] font-medium'>Username</label>
-                                        <div>
-                                            <input type="text" name='username' value={userDetails.username} onChange={handleInputChange} className='bg-[#e2ebf7] w-[60%] p-1 rounded-[4px] pl-3 text-[14px] focus:outline-none' />
-                                        </div>
-                                    </div>
-                                    <div className='flex flex-col gap-2'>
                                         <label htmlFor="" className='text-[13px] font-medium'>Profile Picture</label>
                                         <div>
-                                            <input type="text" name='img' value={userDetails.img} onChange={handleInputChange} className='bg-[#e2ebf7] w-[60%] p-1 rounded-[4px] pl-3 text-[14px] focus:outline-none' />
+                                            <input type="file" ref={inputFileRef} className='bg-[#e2ebf7] w-[60%] p-1 rounded-[4px] pl-3 text-[14px] focus:outline-none' />
                                         </div>
                                     </div>
                                     <div className='flex flex-col gap-2'>
@@ -304,4 +327,4 @@ const Profile = () => {
     )
 }
 
-export default Profile
+export default Profile;

@@ -1,25 +1,28 @@
-import { usersTable } from "@/lib/airtable";
+import { users } from "@/lib/airtable";
 import { auth } from "../../../../auth";
 
 export async function POST(request: Request) {
     const session = await auth();
     if (!session) {
-        return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
-    const { first_name, last_name, img, dob, username, phone, email, country, state, address } = await request.json();
+
+    // Read and parse the request body once
+    const body = await request.json();
+
+    const { first_name, last_name, img, dob, username, phone, email, country, state, address } = body;
+    console.log(img)
 
     try {
 
 
-        const records = await usersTable.select({
-            filterByFormula: `{id} = '${session.user.id}'`,
-        }).firstPage();
+        const record = await users.find(session.user.id as string)
 
-        if (records.length === 0) {
+        if (!record) {
             return Response.json({ message: 'User not found.' }, { status: 404 });
         }
 
-        const user = records[0].fields;
+        const user = record.fields;
 
         const updatedFields: any = {};
 
@@ -35,9 +38,9 @@ export async function POST(request: Request) {
         if (address !== user.address) updatedFields.address = address;
 
         if (Object.keys(updatedFields).length > 0) {
-            await usersTable.update([
+            await users.update([
                 {
-                    id: records[0].id,
+                    id: record.id,
                     fields: updatedFields,
                 },
             ]);

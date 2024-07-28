@@ -1,4 +1,4 @@
-import { usersTable } from "@/lib/airtable";
+import { users } from "@/lib/airtable";
 import { auth } from "../../../../auth";
 
 export async function POST(request: Request) {
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     try {
 
 
-        const records = await usersTable.select({
+        const records = await users.select({
             filterByFormula: `{id} = '${session.user.id}'`,
         }).firstPage();
 
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
             return Response.json({ message: 'Invalid password.' }, { status: 401 });
         }
 
-        await usersTable.update([
+        await users.update([
             {
                 id: records[0].id,
                 fields: { password: newPassword },

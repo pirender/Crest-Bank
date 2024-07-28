@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <div className="flex flex-col md:flex-row">
       <Sidebar />
-      <main className="flex-1 bg-[#e2ebf7] md:pt-24 md:px-8">
+      <main className="flex-1 bg-[#e2ebf7] md:pt-24 md:px-8 overflow-hidden">
         <DashTopBar />
         {children}
       </main>

@@ -1,32 +1,22 @@
 'use client'
 import React from 'react'
 import useSWR from "swr";
-import { RiBarcodeBoxLine } from "react-icons/ri";
-import { MdAccountBalanceWallet } from "react-icons/md";
-import { SiDepositphotos } from "react-icons/si";
-import { GiPayMoney } from "react-icons/gi";
-import { RiCoinsFill } from "react-icons/ri";
-import { VscReferences } from "react-icons/vsc";
-import { PiHandDepositFill } from "react-icons/pi";
+import { FaPlus } from "react-icons/fa6";
+import { formatNumber, formatDate } from '../../lib/util';
+import { FaChevronDown } from "react-icons/fa";
+import { FaChevronUp } from "react-icons/fa";
+
+
 
 interface Transaction {
     id: string;
     fields: {
-        name: string;
-        status: string;
-        account_number: string;
-        recipient_account: string;
-        recipient_name: string;
-        recipient_bank: string;
-        swift_code: string,
-        iban: string,
-        bank_address: string;
-        date: string
-        id: string,
+        payment_account: string,
+        date: string,
         user_id: string,
         type: string,
         amount: number,
-        currency: string,
+        status: string,
     };
 }
 
@@ -34,126 +24,226 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 
 const Main = () => {
-    const { data } = useSWR("https://crestbankplc.vercel.app/api/transactions", fetcher);
-    const { data: user } = useSWR("https://crestbankplc.vercel.app/api/get-user", fetcher);
+    const { data } = useSWR("/api/transactions", fetcher);
+    const { data: user } = useSWR("/api/get-user", fetcher);
+
+    let inflow = 0;
+    if(data){
+       inflow = data.transactions.reduce((acc: any, transaction: Transaction) => {
+            return acc + transaction.fields.amount;
+        }, 0)
+    }
+
+    let balance = 0;
+    if(user){
+        if(user.account_type === 'Savings Account'){
+            balance = user.balance_savings;
+        }else if(user.account_type === 'Current Account'){
+            balance = user.balance_current;
+        }else if(user.account_type === 'Fixed Deposit Account'){
+            balance = user.balance_fixed_deposit;
+        }else if(user.account_type === 'Checking Account'){
+            balance = user.balance_checking;
+        }else if(user.account_type === 'Non Resident Account'){
+            balance = user.balance_non_resident;
+        }else if(user.account_type === 'Joint Account'){
+            balance = user.balance_joint;
+        }else {
+            balance = 0;
+        }
+    }
+    let account = 0;
+    if(user){
+        if(user.account_type === 'Savings Account'){
+            account = user.savings_account;
+        }else if(user.account_type === 'Current Account'){
+            account = user.current_account;
+        }else if(user.account_type === 'Fixed Deposit Account'){
+            account = user.fixed_deposit_account;
+        }else if(user.account_type === 'Checking Account'){
+            account = user.checking_account;
+        }else if(user.account_type === 'Non Resident Account'){
+            account = user.non_resident_account;
+        }else if(user.account_type === 'Joint Account'){
+            account = user.joint_account;
+        }else {
+            account = 0;
+        }
+    }
 
     return (
-        <div className='md:pt-6 pt-4 pb-32'>
+        <div className='md:pt-6 pt-6 pb-6 md:pb-24'>
             <div className="mycontainer md:hidden">
                 <div className="px-4">
                     <div>
-                        <div className='flex flex-col gap-4'>
-                            {/* left */}
-                            <div className='flex flex-col gap-4 bg-white rounded-[8px] p-4 md:flex-[1]'>
-                                <div className='flex flex-col gap-3'>
-                                    <h3 className='font-bold text-[14px] text-primary'>User's Account Financial Status</h3>
-                                    <p className='text-gray-400 text-[14px]'>Account status</p>
+                        <div className='flex flex-col gap-6'>
+                            {/* top */}
+                            <div className='flex flex-col md:flex-row gap-6'>
+                                {/* top left */}
+                                <div className='flex md:flex-[1.6] justify-center md:justify-start items-center'>
+                                    <div className='bg-white w-full sm:max-w-sm pb-3 rounded-[13px] flex flex-col'>
+                                        <div className='bg-primary relative flex flex-col gap-6 rounded-[13px] px-4 pt-3 pb-[80px]'>
+                                            <div className='flex justify-between items-center'>
+                                                <div className='flex gap-2 items-center bg-[#00000074] py-1 rounded-[30px] px-2'>
+                                                    <div className='w-[40px] h-[40px] rounded-full border-[1px] border-primary'>
+                                                        <img src={user?.img} alt="" className='object-cover h-full w-full rounded-full' />
+                                                    </div>
+
+                                                    <p className='text-[11px] md:text-[14px] font-medium text-white'>{user?.first_name + " " + user?.last_name}</p>
+                                                </div>
+
+                                                <div className='flex items-center justify-center p-3 rounded-[15px] bg-[#00000074]'>
+                                                    <FaPlus size={18} color='white' />
+                                                </div>
+                                            </div>
+
+                                            <div className='flex justify-between items-center'>
+                                                <p className='text-white text-[14px]'>Balance:</p>
+
+                                                <p className='text-white text-[14px]'>${formatNumber(balance)}</p>
+                                            </div>
+
+                                            <div className='flex justify-between absolute bottom-[-20px] left-0 right-0 px-4'>
+                                                <div className='bg-white flex flex-col gap-1 w-[40%] shadow-xl p-3 rounded-[8px]'>
+                                                    <div className='flex justify-between items-center'>
+                                                        <p className='text-[12px] md:text-[14px]'>inflow</p>
+
+                                                        <FaChevronDown size={12} color='green' />
+
+                                                    </div>
+
+                                                    <p className='text-green-500 md:text-[14px] sm:text-[12px] text-[70%]'>${formatNumber(inflow)}</p>
+                                                </div>
+                                                <div className='bg-white shadow-xl flex flex-col gap-1 w-[40%] p-3 rounded-[8px]'>
+                                                    <div className='flex justify-between items-center'>
+                                                        <p className='text-[12px] md:text-[14px]'>outflow</p>
+
+                                                        <FaChevronUp size={12} color='red' />
+
+                                                    </div>
+
+                                                    <p className='text-red-500 md:text-[14px] sm:text-[12px] text-[70%]'>$0.00</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* middle top */}
+                                        <div className='mt-10 px-4 flex flex-col gap-2'>
+                                            <div className='flex justify-between items-center'>
+                                                <p className='text-gray-500 text-[13px] md:text-[14px]'>Loan Balance:</p>
+
+                                                <p className='text-[14px] text-[#805dca]'>${user ?formatNumber(user?.loan_balance) : formatNumber(0)}</p>
+                                            </div>
+                                            <div className='flex justify-between items-center'>
+                                                <p className='text-gray-500 text-[13px] md:text-[14px]'>Savings Balance:</p>
+
+                                                <p className='text-[#2196f3] text-[14px]'>${user ? formatNumber(user?.balance_savings) : formatNumber(0)}</p>
+                                            </div>
+                                            <div className='flex justify-between items-center'>
+                                                <p className='text-gray-500 text-[13px] md:text-[14px]'>Account Balance:</p>
+
+                                                <p className='text-[#2196f3] text-[14px]'>${formatNumber(balance)}</p>
+                                            </div>
+                                        </div>
+                                        {/* middle top */}
+
+                                        <div className='mt-5 px-7 justify-between flex'>
+                                            <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#805dca] bg-[#5c1ac32b] md:text-[14px]'>View Details</button>
+
+                                            <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#009688] bg-[#00968830] md:text-[14px]'>Account Details</button>
+                                        </div>
+                                    </div>
+                                    {/* top left */}
                                 </div>
 
-                                <div className='flex flex-col gap-5'>
-                                    <div className='flex items-center gap-4'>
-                                        <div><RiBarcodeBoxLine size={30} color='#004080' /></div>
 
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>{user?.account_number}</h4>
-                                            <p className='text-gray-400 text-[14px]'>Account Number</p>
+
+                                {/* top right */}
+                                <div className='md:flex-[3]'>
+                                    <div className='bg-white rounded-[10px] p-3 flex flex-col gap-4'>
+                                        <div className='flex justify-between items-center'>
+                                            <p>Transactions</p>
+
+                                            <div className='flex gap-[2px] items-center'>
+                                                <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                                <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                                <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                            </div>
+                                        </div>
+
+                                        <div className='flex flex-col gap-6'>
+                                            {data?.transactions?.map((data: Transaction, index: any) => (
+                                                <div key={data.id} className='flex items-center justify-between'>
+                                                    <div className='flex items-center gap-2'>
+                                                        <div className='flex items-center justify-center p-3 rounded-[15px] bg-[#BAE7FF]'>
+                                                            <FaPlus size={15} color='#2196f3' />
+                                                        </div>
+
+                                                        <div className='flex flex-col gap-1'>
+                                                            <p className='font-bold text-primary text-[13px]'>{data.fields.type}</p>
+
+                                                            <p className='text-gray-500 text-[13px]'>{formatDate(data.fields.date)}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <p className='text-green-500 text-[13px]'>+${formatNumber(data.fields.amount)}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><MdAccountBalanceWallet size={30} color='#004080' /></div>
+                                </div>
+                                {/* top right */}
+                            </div>
+                            {/* top */}
 
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>$ {user?.balance_usd?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
-                                            <p className='text-gray-400 text-[14px]'>USD Account</p>
+                            {/* bottom */}
+                            <div className=' flex flex-col md:flex-row md:items-center gap-4'>
+                                <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-9'>
+                                    <div className='flex justify-between items-center'>
+                                        <p className='text-[17px]'>Statistics</p>
+
+                                        <div className='flex gap-[2px] items-center'>
+                                            <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                            <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                            <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
                                         </div>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><MdAccountBalanceWallet size={30} color='#004080' /></div>
 
+                                    <div className='px-3 md:px-6 flex justify-between items-center'>
                                         <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>€ {user?.balance_eur?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
-                                            <p className='text-gray-400 text-[14px]'>Euro Account</p>
+                                            <p className='text-[13px] text-gray-500 font-semibold'>Total Visits</p>
+
+                                            <p className='text-[#f8538d] text-[13px] font-medium md:text-[18px]'>423,964</p>
+                                        </div>
+                                        <div>
+                                            <p className='text-[13px] text-gray-500 font-semibold'>Paid Visits</p>
+
+                                            <p className='text-[#f8538d] text-[13px] font-medium md:text-[18px]'>7,929</p>
                                         </div>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><MdAccountBalanceWallet size={30} color='#004080' /></div>
-
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>£ {user?.balance_gbp?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
-                                            <p className='text-gray-400 text-[14px]'>Pounds Account</p>
-                                        </div>
+                                </div>
+                                <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-8'>
+                                    <div className='flex justify-between items-center'>
+                                        <p className='text-[14px] md:text-[23px] font-semibold'>{user?.account_type}</p>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><SiDepositphotos size={30} color='#004080' /></div>
 
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>USD 0.00</h4>
-                                            <p className='text-gray-400 text-[14px]'>Total Deposits</p>
-                                        </div>
+                                    <div className='flex items-center'>
+                                        <p className='text-[#e95f2b] text-[14px] md:text-[30px] font-medium'>({account})</p>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><GiPayMoney size={30} color='#004080' /></div>
-
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>USD 0.00</h4>
-                                            <p className='text-gray-400 text-[14px]'>Fixed Deposit Interest</p>
-                                        </div>
+                                </div>
+                                <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-8'>
+                                    <div className='flex justify-between items-center'>
+                                        <p className='text-[14px] md:text-[23px] font-semibold'>Savings Account</p>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><RiCoinsFill size={30} color='#004080' /></div>
 
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>USD {user?.bonus}</h4>
-                                            <p className='text-gray-400 text-[14px]'>Account Bonus</p>
-                                        </div>
-                                    </div>
-                                    <div className='flex items-center gap-4 text-primary'>
-                                        <div><VscReferences size={30} color='#004080' /></div>
-
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>USD 0.00</h4>
-                                            <p className='text-gray-400 text-[14px]'>Referral Bonus</p>
-                                        </div>
-                                    </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><PiHandDepositFill size={30} color='#004080' /></div>
-
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>0 Fixed Deposit</h4>
-                                            <p className='text-gray-400 text-[14px]'>Active Fixed Deposit</p>
-                                        </div>
+                                    <div className='flex items-center'>
+                                        <p className='text-[#e95f2b] text-[14px] md:text-[30px] font-medium'>({user ? user?.savings_account : 0})</p>
                                     </div>
                                 </div>
                             </div>
-                            {/* left */}
-
-                            {/* right */}
-                            <div className='flex flex-col gap-4 md:flex-[3]'>
-                                <div>
-                                    <h3 className='font-bold text-[14px] text-primary'>Transactions</h3>
-                                </div>
-                                {data?.transactions?.map((transaction: Transaction) => (
-                                    <div key={transaction.id} className='md:flex-row flex gap-4 flex-col md:justify-between bg-white md:items-center p-4 rounded-[8px]'>
-                                        <div className='flex flex-col gap-1'>
-                                            <h5 className='font-bold text-[14px] text-primary'>Name</h5>
-                                            <p className='text-gray-400 text-[14px]'>{transaction.fields.recipient_name}</p>
-                                        </div>
-                                        <div className='flex flex-col gap-1'>
-                                            <h5 className='font-bold text-[14px] text-primary'>Amount</h5>
-                                            <p className='text-red-500 text-[14px]'>-{transaction.fields.currency === "USD" ? '$' : transaction.fields.currency === "GBP" ? "£" : "€" }{transaction.fields.amount}</p>
-                                        </div>
-                                        <div className='flex flex-col ga-1'>
-                                            <h5 className='font-bold text-[14px] text-primary'>Account Number</h5>
-                                            <p className='text-gray-400 text-[14px]'>{transaction.fields.recipient_account}</p>
-                                        </div>
-                                        <div className='flex flex-col gap-1'>
-                                            <h5 className='font-bold text-[14px] text-primary'>Status</h5>
-                                            <p className='text-green-500 text-[14px]'>{transaction.fields.status}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            {/* right */}
+                            {/* bottom */}
                         </div>
                     </div>
                 </div>
@@ -161,123 +251,179 @@ const Main = () => {
             <div className="hidden md:block">
                 <div className="px-4">
                     <div>
-                        <div className='flex flex-col md:flex-row gap-4'>
-                            {/* left */}
-                            <div className='flex flex-col gap-4 bg-white rounded-[8px] p-4 md:flex-[1]'>
-                                <div className='flex flex-col gap-3'>
-                                    <h3 className='font-bold text-[14px] text-primary'>User's Account Financial Status</h3>
-                                    <p className='text-gray-400 text-[14px]'>Account status</p>
+                        <div className='flex flex-col gap-6'>
+                            {/* top */}
+                            <div className='flex flex-col md:flex-row gap-6'>
+                                {/* top left */}
+                                <div className='flex md:flex-[1.6] justify-center md:justify-start items-center'>
+                                    <div className='bg-white w-full sm:max-w-sm pb-3 rounded-[13px] flex flex-col'>
+                                        <div className='bg-primary relative flex flex-col gap-6 rounded-[13px] px-4 pt-3 pb-[80px]'>
+                                            <div className='flex justify-between items-center'>
+                                                <div className='flex gap-2 items-center bg-[#00000074] py-1 rounded-[30px] px-2'>
+                                                    <div className='w-[40px] h-[40px] rounded-full border-[1px] border-primary'>
+                                                        <img src={user?.img} alt="" className='object-cover h-full w-full rounded-full' />
+                                                    </div>
+
+                                                    <p className='text-[11px] md:text-[14px] font-medium text-white'>{user?.first_name + " " + user?.last_name}</p>
+                                                </div>
+
+                                                <div className='flex items-center justify-center p-3 rounded-[15px] bg-[#00000074]'>
+                                                    <FaPlus size={18} color='white' />
+                                                </div>
+                                            </div>
+
+                                            <div className='flex justify-between items-center'>
+                                                <p className='text-white text-[14px]'>Balance:</p>
+
+                                                <p className='text-white text-[14px]'>${formatNumber(balance)}</p>
+                                            </div>
+
+                                            <div className='flex justify-between absolute bottom-[-20px] left-0 right-0 px-4'>
+                                                <div className='bg-white flex flex-col gap-1 w-[40%] shadow-xl p-3 rounded-[8px]'>
+                                                    <div className='flex justify-between items-center'>
+                                                        <p className='text-[12px] md:text-[14px]'>inflow</p>
+
+                                                        <FaChevronDown size={12} color='green' />
+
+                                                    </div>
+
+                                                    <p className='text-green-500 md:text-[14px] sm:text-[12px] text-[70%]'>${formatNumber(inflow)}</p>
+                                                </div>
+                                                <div className='bg-white shadow-xl flex flex-col gap-1 w-[40%] p-3 rounded-[8px]'>
+                                                    <div className='flex justify-between items-center'>
+                                                        <p className='text-[12px] md:text-[14px]'>outflow</p>
+
+                                                        <FaChevronUp size={12} color='red' />
+
+                                                    </div>
+
+                                                    <p className='text-red-500 md:text-[14px] sm:text-[12px] text-[70%]'>$0.00</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* middle top */}
+                                        <div className='mt-10 px-4 flex flex-col gap-2'>
+                                            <div className='flex justify-between items-center'>
+                                                <p className='text-gray-500 text-[13px] md:text-[14px]'>Loan Balance:</p>
+
+                                                <p className='text-[14px] text-[#805dca]'>${user ? formatNumber(user?.loan_balance) : formatNumber(0)}</p>
+                                            </div>
+                                            <div className='flex justify-between items-center'>
+                                                <p className='text-gray-500 text-[13px] md:text-[14px]'>Saving Balance:</p>
+
+                                                <p className='text-[#2196f3] text-[14px]'>${user ? formatNumber(user?.balance_savings) : formatNumber(0)}</p>
+                                            </div>
+                                            <div className='flex justify-between items-center'>
+                                                <p className='text-gray-500 text-[13px] md:text-[14px]'>Account Balance</p>
+
+                                                <p className='text-[#2196f3] text-[14px]'>${formatNumber(balance)}</p>
+                                            </div>
+                                        </div>
+                                        {/* middle top */}
+
+                                        <div className='mt-5 px-7 justify-between flex'>
+                                            <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#805dca] bg-[#5c1ac32b] md:text-[14px]'>View Details</button>
+
+                                            <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#009688] bg-[#00968830] md:text-[14px]'>Account Details</button>
+                                        </div>
+                                    </div>
+                                    {/* top left */}
                                 </div>
 
-                                <div className='flex flex-col gap-5'>
-                                    <div className='flex items-center gap-4'>
-                                        <div><RiBarcodeBoxLine size={30} color='#004080' /></div>
 
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>{user?.account_number}</h4>
-                                            <p className='text-gray-400 text-[14px]'>Account Number</p>
+
+                                {/* top right */}
+                                <div className='md:flex-[3]'>
+                                    <div className='bg-white rounded-[10px] p-3 flex flex-col gap-4'>
+                                        <div className='flex justify-between items-center'>
+                                            <p>Transactions</p>
+
+                                            <div className='flex gap-[2px] items-center'>
+                                                <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                                <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                                <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                            </div>
+                                        </div>
+
+                                        <div className='flex flex-col gap-6'>
+                                            {data?.transactions?.map((data: Transaction, index: any) => (
+                                                <div key={data.id} className='flex items-center justify-between'>
+                                                    <div className='flex items-center gap-2'>
+                                                        <div className='flex items-center justify-center p-3 rounded-[15px] bg-[#BAE7FF]'>
+                                                            <FaPlus size={15} color='#2196f3' />
+                                                        </div>
+
+                                                        <div className='flex flex-col gap-1'>
+                                                            <p className='font-bold text-primary text-[13px]'>{data.fields.type}</p>
+
+                                                            <p className='text-gray-500 text-[13px]'>{formatDate(data.fields.date)}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <p className='text-green-500 text-[13px]'>+${formatNumber(data.fields.amount)}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* top right */}
+                            </div>
+                            {/* top */}
+
+                            {/* bottom */}
+                            <div className=' flex flex-col md:flex-row md:items-center gap-4'>
+                                <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-9'>
+                                    <div className='flex justify-between items-center'>
+                                        <p className='text-[17px]'>Statistics</p>
+
+                                        <div className='flex gap-[2px] items-center'>
+                                            <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                            <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
+                                            <div className='h-[4px] w-[4px] bg-gray-500 rounded-full'></div>
                                         </div>
                                     </div>
 
-                                    <div className='flex items-center gap-4'>
-                                        <div><MdAccountBalanceWallet size={30} color='#004080' /></div>
-
+                                    <div className='px-3 md:px-6 flex justify-between items-center'>
                                         <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>$ {user?.balance_usd?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
-                                            <p className='text-gray-400 text-[14px]'>USD Account</p>
+                                            <p className='text-[13px] text-gray-500 font-semibold'>Total Visits</p>
+
+                                            <p className='text-[#f8538d] text-[13px] font-medium md:text-[18px]'>423,964</p>
+                                        </div>
+                                        <div>
+                                            <p className='text-[13px] text-gray-500 font-semibold'>Paid Visits</p>
+
+                                            <p className='text-[#f8538d] text-[13px] font-medium md:text-[18px]'>7,929</p>
                                         </div>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><MdAccountBalanceWallet size={30} color='#004080' /></div>
-
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>€ {user?.balance_eur?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
-                                            <p className='text-gray-400 text-[14px]'>Euros Account </p>
-                                        </div>
+                                </div>
+                                <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-8'>
+                                    <div className='flex justify-between items-center'>
+                                        <p className='text-[14px] md:text-[23px] font-semibold'>{user?.account_type}</p>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><MdAccountBalanceWallet size={30} color='#004080' /></div>
 
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>£ {user?.balance_gbp?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
-                                            <p className='text-gray-400 text-[14px]'>Pounds Account </p>
-                                        </div>
+                                    <div className='flex items-center'>
+                                        <p className='text-[#e95f2b] text-[14px] md:text-[30px] font-medium'>({account})</p>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><SiDepositphotos size={30} color='#004080' /></div>
-
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>$ 0.00</h4>
-                                            <p className='text-gray-400 text-[14px]'>Total Deposits</p>
-                                        </div>
+                                </div>
+                                <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-8'>
+                                    <div className='flex justify-between items-center'>
+                                        <p className='text-[14px] md:text-[23px] font-semibold'>Savings Account</p>
                                     </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><GiPayMoney size={30} color='#004080' /></div>
 
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>$ 0.00</h4>
-                                            <p className='text-gray-400 text-[14px]'>Fixed Deposit Interest</p>
-                                        </div>
-                                    </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><RiCoinsFill size={30} color='#004080' /></div>
-
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>$ {user?.bonus}</h4>
-                                            <p className='text-gray-400 text-[14px]'>Account Bonus</p>
-                                        </div>
-                                    </div>
-                                    <div className='flex items-center gap-4 text-primary'>
-                                        <div><VscReferences size={30} color='#004080' /></div>
-
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>$ 0.00</h4>
-                                            <p className='text-gray-400 text-[14px]'>Referral Bonus</p>
-                                        </div>
-                                    </div>
-                                    <div className='flex items-center gap-4'>
-                                        <div><PiHandDepositFill size={30} color='#004080' /></div>
-
-                                        <div>
-                                            <h4 className='font-bold text-[14px] text-primary'>0 Fixed Deposit</h4>
-                                            <p className='text-gray-400 text-[14px]'>Active Fixed Deposit</p>
-                                        </div>
+                                    <div className='flex items-center'>
+                                        <p className='text-[#e95f2b] text-[14px] md:text-[30px] font-medium'>({user ? user?.savings_account : 0})</p>
                                     </div>
                                 </div>
                             </div>
-                            {/* left */}
-
-                            {/* right */}
-                            <div className='flex flex-col gap-4 md:flex-[3]'>
-                                <div>
-                                    <h3 className='font-bold text-[14px] text-primary'>Transactions</h3>
-                                </div>
-                                {data?.transactions?.map((transaction: Transaction) => (
-                                    <div key={transaction.id} className='md:flex-row flex gap-4 flex-col md:justify-between bg-white md:items-center p-4 rounded-[8px]'>
-                                        <div className='flex flex-col gap-1'>
-                                            <h5 className='font-bold text-[14px] text-primary'>Name</h5>
-                                            <p className='text-gray-400 text-[14px] capitalize'>{transaction.fields.recipient_name}</p>
-                                        </div>
-                                        <div className='flex flex-col gap-1'>
-                                            <h5 className='font-bold text-[14px] text-primary'>Amount</h5>
-                                            <p className='text-red-500 text-[14px]'>-{transaction.fields.currency === "USD" ? '$' : transaction.fields.currency === "GBP" ? "£" : "€" }{transaction.fields.amount}</p>
-                                        </div>
-                                        <div className='flex flex-col gap-1'>
-                                            <h5 className='font-bold text-[14px] text-primary'>Account Number</h5>
-                                            <p className='text-gray-400 text-[14px]'>{transaction.fields.recipient_account}</p>
-                                        </div>
-                                        <div className='flex flex-col gap-1'>
-                                            <h5 className='font-bold text-[14px] text-primary'>Status</h5>
-                                            <p className='text-green-500 text-[14px]'>{transaction.fields.status}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            {/* right */}
+                            {/* bottom */}
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     )
 }

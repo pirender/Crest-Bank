@@ -1,11 +1,11 @@
-import { usersTable } from '@/lib/airtable';
+import { users } from '@/lib/airtable';
 import jwt from 'jsonwebtoken';
 
 export async function POST(request: Request) {
     const { email, code } = await request.json();
 
     try {
-        const records = await usersTable.select({
+        const records = await users.select({
             filterByFormula: `{email} = '${email}'`,
         }).firstPage();
 
@@ -17,13 +17,7 @@ export async function POST(request: Request) {
         const vcode = user.fields.verificationCode?.toString()
 
         if (vcode === code) {
-            // const token = jwt.sign({ id: user.id, email: user.fields.email }, process.env.JWT_SECRET!, {
-            //     expiresIn: '1h',
-            // });
-
-            const { password, verificationCode, ...filteredUser } = user.fields;
-
-            return Response.json({ user: filteredUser }, {status: 200});
+            return Response.json({ user: user }, {status: 200});
         } else {
             return Response.json({ error: 'Invalid verification code.' }, {status: 401});
         }

@@ -1,27 +1,29 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials"
 import { type DefaultSession } from "next-auth"
-// import { getUserByUsername } from "@/lib/airtable";
 import { JWT } from "next-auth/jwt"
-import { getSession } from "next-auth/react";
+import { getUser } from "@/lib/airtable";
+import axios from "axios";
 
 declare module "next-auth/jwt" {
     /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
     interface JWT {
         /** OpenID ID Token */
-        first_name?: string,
-        last_name?: string,
-        phone?: string,
-        country?: string,
-        state?: string,
-        address?: string,
-        transactions?: string[],
-        account_number?: number,
-        balance?: number,
-        bonus?: number,
-        dob?: string,
-        username?: string,
-        id?: string,
+        // first_name?: string,
+        // last_name?: string,
+        // phone?: string,
+        // country?: string,
+        // state?: string,
+        // address?: string,
+        // transactions?: string[],
+        // account_number?: number,
+        // balance?: number,
+        // bonus?: number,
+        // dob?: string,
+        // username?: string,
+        // id?: string,
+        isApproved: string,
+        kyc_pending: string,
     }
 }
 
@@ -33,21 +35,11 @@ declare module "next-auth" {
     interface Session {
         user: {
             /** The user's postal address. */
-            first_name?: string,
-            last_name?: string,
-            phone?: string,
-            country?: string,
-            state?: string,
-            address?: string,
-            img?: string,
-            transactions?: any,
-            account_number?: number,
-            balance?: number,
-            bonus?: number,
             email?: string,
-            dob?: string,
-            username?: string,
-            id?: string,
+            last_name?: string,
+            first_name?: string,
+            isApproved: string,
+            kyc_pending: string,
             /**
              * By default, TypeScript merges new interface properties and overwrites existing ones.
              * In this case, the default session user properties will be overwritten,
@@ -58,19 +50,15 @@ declare module "next-auth" {
     }
 
     interface User {
-        first_name?: string,
-        last_name?: string,
-        phone?: string,
-        country?: string,
-        state?: string,
-        address?: string,
-        img?: string,
-        transactions?: any,
-        account_number?: number,
-        balance?: number,
-        bonus?: number,
-        dob?: string,
-        username?: string,
+        id?: string,
+        fields: {
+            email: string,
+            last_name: string,
+            first_name: string,
+            img: string,
+            isApproved: string,
+            kyc_pending: string,
+        }
     }
 }
 
@@ -92,7 +80,7 @@ const config = {
         },
         authorize: async (credentials) => {
             try {
-                const response = await fetch(`https://crestbankplc.vercel.app/api/verify`, {
+                const response = await fetch(`http://localhost:3000/api/verify`, {
                     method: 'POST',
                     headers: {
                         "Content-Type": 'application/json'
@@ -116,40 +104,25 @@ const config = {
     callbacks: {
         jwt({ token, user }) {
             if (user) {
-                token.dob = user.dob
-                token.first_name = user.first_name
-                token.last_name = user.last_name
-                token.address = user.address
-                token.account_number = user.account_number,
-                    token.balance = user.balance
-                token.bonus = user.bonus
-                token.username = user.username
-                token.country = user.country
-                token.picture = user.img
-                token.transactions = user.transactions
-                token.phone = user.phone
-                token.state = user.state
-                token.id = user.id
+                token.email = user.fields.email
+                token.picture = user.fields.img
+                token.name = `${user.fields.first_name} ${user.fields.last_name}`
+                token.isApproved = user.fields.isApproved;
+                token.kyc_pending = user.fields.kyc_pending;
             }
             return token
         },
-        session({ session, token }) {
+        session: async ({ session, token }) => {
             if (token) {
-                session.user.first_name = token.first_name
-                session.user.last_name = token.last_name
-                session.user.dob = token.dob
-                session.user.address = token.address
-                session.user.account_number = token.account_number
-                session.user.balance = token.balance
-                session.user.bonus = token.bonus
-                session.user.username = token.username
-                session.user.country = token.country
-                session.user.transactions = token.transactions
-                session.user.phone = token.phone
-                session.user.state = token.state
-                session.user.id = token.id as string
+                // Fetch the latest user data from the database
+                const response = await axios.get(`http://localhost:3000/api/session-user?id=${token.sub}`);
+                const user = await response.data;
+                session.user.id = token.sub as string;
+                session.user.isApproved = user?.isApproved as string;
+                session.user.kyc_pending = user?.kyc_pending as string;
             }
             return session
+
         }
         // authorized: async ({ request, auth }) => {
         //     const { pathname } = request.nextUrl;
