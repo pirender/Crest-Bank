@@ -62,7 +62,7 @@ const CryptoDeposit = () => {
                         type="text"
                         value={cryptoAddresses[selectedCrypto].address}
                         readOnly
-                        className="w-full flex-1 p-2 border rounded"
+                        className="w-full bg-[#e2ebf7] flex-1 p-2 border rounded"
                     />
                     <button onClick={handleCopyAddress} className="ml-2 p-2 bg-primary text-white rounded">
                         <FiCopy size={20} />
@@ -71,15 +71,15 @@ const CryptoDeposit = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block mb-1">Amount</label>
-                        <input type="number" required className="w-full p-2 border rounded" />
+                        <input type="number" required className="w-full bg-[#e2ebf7] p-2 border rounded" />
                     </div>
                     <div>
                         <label className="block mb-1">Wallet</label>
-                        <input type="text" required className="w-full p-2 border rounded" />
+                        <input type="text"  required className="w-full bg-[#e2ebf7] p-2 border rounded" />
                     </div>
                     <div>
                         <label className="block mb-1">Deposit Proof</label>
-                        <input type="file" required className="w-full p-2 border rounded" />
+                        <input type="file" required className="w-full bg-[#e2ebf7] p-2 border rounded" />
                     </div>
                     <button type="submit" className="w-full bg-primary text-white p-2 rounded">Confirm Deposit</button>
                 </form>
