@@ -115,7 +115,7 @@ const KYC: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block mb-1">Type of Employment</label>
-            <select {...register('employmentType', { required: true })} className="w-full p-2 border rounded">
+            <select {...register('employmentType', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded">
               <option value="select-type-of-employement">Select Type Of Employement</option>
               <option value="self-employed">Self Employed</option>
               <option value="employee">Employee</option>
@@ -124,7 +124,7 @@ const KYC: React.FC = () => {
           </div>
           <div>
             <label className="block mb-1">Annual Income</label>
-            <select {...register('annualIncome', { required: true })} className="w-full p-2 border rounded">
+            <select {...register('annualIncome', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded">
               <option value="select-salary-range">Select Salary Range</option>
               <option value="5000-10000">5000-10000</option>
               <option value="10000-15000">10000-15000</option>
@@ -134,7 +134,7 @@ const KYC: React.FC = () => {
           </div>
           <div>
             <label className="block mb-1">State Security Number (SSN, NI, SIN, etc)</label>
-            <input {...register('ssn', { required: true })} className="w-full p-2 border rounded" />
+            <input {...register('ssn', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
           </div>
           <div>
             <label className="block mb-1">ID Number</label>
@@ -154,13 +154,13 @@ const KYC: React.FC = () => {
           </div>
           <div>
             <label className="flex items-center">
-              <input type="checkbox" {...register('credentialsNotExpired')} className="mr-2" />
+              <input type="checkbox" {...register('credentialsNotExpired')} className="mr-2 bg-[#e2ebf7]" />
               Credentials Not Expired
             </label>
           </div>
           <div>
             <label className="flex items-center">
-              <input type="checkbox" {...register('documentVisible')} className="mr-2" />
+              <input type="checkbox" {...register('documentVisible')} className="mr-2 bg-[#e2ebf7]" />
               Document is Visible
             </label>
           </div>
