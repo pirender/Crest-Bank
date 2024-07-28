@@ -25,12 +25,12 @@ const Ticketform = () => {
                                 <div className='flex flex-col gap-2'>
                                     <p className='text-gray-400 text-[13px] md:text-[16px]'>More information</p>
 
-                                    <textarea name="" id="" rows={8} placeholder='Well detailed' className='p-2 rounded-md placeholder:text-gray-400 placeholder:text-[13px] focus:outline-none border-[1px] border-gray-400'></textarea>
+                                    <textarea name="" id="" rows={8} placeholder='Well detailed' className='p-2 bg-[#e2ebf7] rounded-md placeholder:text-gray-400 placeholder:text-[13px] focus:outline-none border-[1px] border-gray-400'></textarea>
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <p className='text-gray-400 text-[13px] md:text-[16px]'>Account password</p>
 
-                                    <input type="text" name="" id="" placeholder='*****' className='p-2 rounded-md placeholder:text-gray-400 placeholder:text-[13px] focus:outline-none border-[1px] border-gray-400' />
+                                    <input type="text" name="" id="" placeholder='*****' className='p-2 rounded-md placeholder:text-gray-400 bg-[#e2ebf7] placeholder:text-[13px] focus:outline-none border-[1px] border-gray-400' />
                                 </div>
 
                                 <div>
