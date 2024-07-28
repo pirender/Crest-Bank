@@ -146,7 +146,7 @@ const SignUp: React.FC = () => {
 
             const { confirmPassword, ...newData } = data
 
-            const response = await axios.post('/api/signup', newData);
+            const response = await axios.post('https://crest-bank.vercel.app/api/signup', newData);
 
             if (response.data.success) {
                 reset()
