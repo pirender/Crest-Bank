@@ -2,7 +2,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import html2canvas from 'html2canvas-pro';
 
 const transactions = [
@@ -66,41 +66,10 @@ const Statement: React.FC = () => {
             });
     }
 
-    if (!transaction) {
-        return <div>Loading...</div>;
-    }
+    // if (!transaction) {
+    //     return <div>Loading...</div>;
+    // }
 
-    //     return (
-    //         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-    //             <div id="print-section" className="bg-white p-8 rounded w-full max-w-4xl">
-    //                 <div className="flex justify-between items-center mb-6">
-    //                     <div>
-    //                         <img src="/logo.png" alt="Logo" className="w-16 h-16" />
-    //                         <h2 className="text-xl font-bold">Valorstrive</h2>
-    //                         <p>3 Abbey Road, San Francisco CA 94102</p>
-    //                         <p>support@valorstrive.com</p>
-    //                         <p>+1987655678</p>
-    //                     </div>
-    //                     <div>
-    //                         <h2 className="text-2xl font-bold">Invoice: {transaction.id}</h2>
-    //                         <h4 className="text-xl">{transaction.status}</h4>
-    //                     </div>
-    //                 </div>
-    //                 <div>
-    //                     <h3 className="text-lg font-bold">Transaction Details</h3>
-    //                     <p>Transaction Amount: {transaction.amount}</p>
-    //                     <p>Transaction Type: {transaction.type}</p>
-    //                     <p>Payment Account: {transaction.paymentAccount}</p>
-    //                     <p>Transaction Status: {transaction.status}</p>
-    //                     <p>Transaction Date: {transaction.date}</p>
-    //                 </div>
-    //                 <div className="mt-6 flex justify-between items-center">
-    //                     <button onClick={handlePrint} className="bg-purple-500 text-white px-4 py-2 rounded">Print Invoice</button>
-    //                     <button className="bg-red-500 text-white px-4 py-2 rounded">Report Transaction</button>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     );
 
     return (
         <div className='md:pt-6 pt-6  md:pb-24 pb-[200px]'>
@@ -203,4 +172,12 @@ const Statement: React.FC = () => {
 
 };
 
-export default Statement;
+const StatementPage = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <Statement />
+        </Suspense>
+    );
+};
+
+export default StatementPage;
