@@ -42,7 +42,7 @@ const BankStatement: React.FC = () => {
   };
 
   return (
-    <div className="md:pt-6">
+    <div className="md:pt-6 lg:pb-0 pb-[600px]">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-6xl">
         <div className="flex flex-col gap-3 md:gap-0 md:flex-row justify-between md:items-center mb-4">
           <h2 className="text-2xl font-bold text-primary">Bank Statement</h2>
@@ -57,7 +57,7 @@ const BankStatement: React.FC = () => {
                 </svg>
               </div>
             </div>
-            <input type="text" placeholder="Search..." className="border border-gray-300 p-2 rounded" />
+            <input type="text" placeholder="Search..." className="border bg-[#e2ebf7] border-gray-300 p-2 rounded" />
           </div>
         </div>
         <div className="overflow-x-auto">
