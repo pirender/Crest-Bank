@@ -176,7 +176,7 @@ const SignUp: React.FC = () => {
                 </dialog>
                 {step === 1 && (
                     <>
-                        <h2 className="text-2xl font-bold mb-6">Sign Up</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-primary">Sign Up</h2>
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             <div>
                                 <label className="block mb-1">First Name</label>
