@@ -8,7 +8,7 @@ const page = async () => {
 
   return (
     <div>
-      {session?.user.kyc_pending === 'YES' ? <div className=' pt-16 md:pt-0 '><KycPending /></div> : <div>
+      {session?.user.kyc_pending === 'YES' ? <div className=' pt-16 md:pt-0 '><KycPending /></div> : <div className=' pt-16 md:pt-0'>
         <KYC />
       </div>}
 
