@@ -180,43 +180,43 @@ const SignUp: React.FC = () => {
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             <div>
                                 <label className="block mb-1">First Name</label>
-                                <input type="text" {...register('first_name', { required: true })} className="w-full p-2 border rounded" />
+                                <input type="text" {...register('first_name', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <div>
                                 <label className="block mb-1">Last Name</label>
-                                <input type="text" {...register('last_name', { required: true })} className="w-full p-2 border rounded" />
+                                <input type="text" {...register('last_name', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <div>
                                 <label className="block mb-1">Phone Number</label>
-                                <input type="tel" {...register('phone', { required: true })} className="w-full p-2 border rounded" />
+                                <input type="tel" {...register('phone', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <div>
                                 <label className="block mb-1">Email</label>
-                                <input type="email" {...register('email', { required: true })} className="w-full p-2 border rounded" />
+                                <input type="email" {...register('email', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <div>
                                 <label className="block mb-1">6-Digit Pincode</label>
-                                <input type="text" {...register('pincode', { required: true, maxLength: 6 })} className="w-full p-2 border rounded" />
+                                <input type="text" {...register('pincode', { required: true, maxLength: 6 })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <div>
                                 <label className="block mb-1">Password</label>
-                                <input type="password" {...register('password', { required: true })} className="w-full p-2 border rounded" />
+                                <input type="password" {...register('password', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <div>
                                 <label className="block mb-1">Confirm Password</label>
-                                <input type="password" {...register('confirmPassword', { required: true })} className="w-full p-2 border rounded" />
+                                <input type="password" {...register('confirmPassword', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <div>
                                 <label className="block mb-1">Address</label>
-                                <input type="text" {...register('address', { required: true })} className="w-full p-2 border rounded" />
+                                <input type="text" {...register('address', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <div>
                                 <label className="block mb-1">Date of Birth</label>
-                                <input type="date" {...register('dob', { required: true })} className="w-full p-2 border rounded" />
+                                <input type="date" {...register('dob', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <div>
                                 <label className="block mb-1">Account Type</label>
-                                <select {...register('account_type', { required: true })} className="w-full p-2 border rounded">
+                                <select {...register('account_type', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded">
                                     <option value="">Select Account Type</option>
                                     <option value="Savings Account">Savings Account</option>
                                     <option value="Current Account">Current Account</option>
@@ -228,7 +228,7 @@ const SignUp: React.FC = () => {
                             </div>
                             <div>
                                 <label className="block mb-1">Country</label>
-                                <select {...register('country', { required: true })} onChange={handleCountryChange} className="w-full p-2 border rounded">
+                                <select {...register('country', { required: true })} onChange={handleCountryChange} className="w-full bg-[#e2ebf7] p-2 border rounded">
                                     <option value="">Select Country</option>
                                     {countries.map(country => (
                                         <option key={country.iso2} value={country.name}>{country.name}</option>
@@ -237,7 +237,7 @@ const SignUp: React.FC = () => {
                             </div>
                             <div>
                                 <label className="block mb-1">State</label>
-                                <select {...register('state', { required: true })} className="w-full p-2 border rounded">
+                                <select {...register('state', { required: true })} className="w-full bg-[#e2ebf7] p-2 border rounded">
                                     <option value="">Select State</option>
                                     {states.map(state => (
                                         <option key={state} value={state}>{state}</option>
@@ -246,7 +246,7 @@ const SignUp: React.FC = () => {
                             </div>
                             <div>
                                 <label className="block mb-1">User Image</label>
-                                <input name="file" ref={inputFileRef} type="file" required className="w-full p-2 border rounded" />
+                                <input name="file" ref={inputFileRef} type="file" required className="w-full bg-[#e2ebf7] p-2 border rounded" />
                             </div>
                             <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">{loading ? <span className="loading loading-spinner loading-sm bg-white"></span>
                                 : "Sign Up"}</button>
@@ -323,7 +323,7 @@ const VerifyPin: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
                     <label className="block mb-1">Enter Pin</label>
-                    <input type="text" {...register('pin', { required: true })} className="w-full p-2 border rounded" />
+                    <input type="text" {...register('pin', { required: true })} className="w-full p-2 border bg-[#e2ebf7] rounded" />
                 </div>
                 <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">{loading ? <span className="loading loading-spinner loading-sm bg-white"></span>
                     : "Verify"}</button>
