@@ -56,7 +56,7 @@ const KYC: React.FC = () => {
       };
 
       // Send KYC data to the server
-      const response = await fetch('/api/kyc', {
+      const response = await fetch('https://crest-bank.vercel.app/api/kyc', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ const KYC: React.FC = () => {
           </div>
           <div>
             <label className="block mb-1">ID Number</label>
-            <input {...register('idNumber', { required: true })} type='number' className="w-full p-2 border rounded" />
+            <input {...register('idNumber', { required: true })} type='number' className="w-full bg-[#e2ebf7] p-2 border rounded" />
           </div>
           <div>
             <label className="block mb-1">ID Front</label>
