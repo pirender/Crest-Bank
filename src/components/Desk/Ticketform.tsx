@@ -54,7 +54,7 @@ const Ticketform: React.FC = () => {
         }
 
         try {
-            const res = await axios.post('/api/new-ticket', data);
+            const res = await axios.post('https://crest-bank.vercel.app/api/new-ticket', data);
 
             if (res.status === 200) {
                 setSuccess('Your request is currently being reviewed');

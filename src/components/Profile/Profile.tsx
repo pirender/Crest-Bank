@@ -87,7 +87,7 @@ const Profile = () => {
                 newImageUrl = await handleImageUpload();
 
                 if (newImageUrl) {
-                    const res = await fetch(`/api/delete-image?filename=${userDetails.img}`, {
+                    const res = await fetch(`https://crest-bank.vercel.app/api/delete-image?filename=${userDetails.img}`, {
                         method: 'DELETE',
                     });
 
@@ -107,7 +107,7 @@ const Profile = () => {
 
             setUserDetails(updatedDetails);
 
-            const response = await axios.post('/api/update-user', updatedDetails);
+            const response = await axios.post('https://crest-bank.vercel.app/api/update-user', updatedDetails);
             if (response.data.error) {
                 setUpdateError(response.data.error);
             } else {

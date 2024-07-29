@@ -59,7 +59,7 @@ const LoanRequest: React.FC = () => {
     }
 
     try {
-      const res = await axios.post('/api/new-loan', data);
+      const res = await axios.post('https://crest-bank.vercel.app/api/new-loan', data);
 
       if (res.status === 200) {
         setSuccess('Your request is currently being reviewed');
