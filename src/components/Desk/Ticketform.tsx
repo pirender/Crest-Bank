@@ -1,41 +1,135 @@
-import React from 'react'
+'use client'
+import axios from 'axios';
+import React, { useState } from 'react'
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { GiCancel } from 'react-icons/gi';
+import { GrStatusGood } from 'react-icons/gr';
+import useSWR from 'swr';
 
-const Ticketform = () => {
+interface FormData {
+    details: string;
+    type: string;
+    pincode: string;
+}
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+const Ticketform: React.FC = () => {
+    const { data: user } = useSWR("/api/get-user", fetcher);
+    const { register, handleSubmit, reset } = useForm<FormData>();
+
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState('');
+
+    const onSubmit: SubmitHandler<FormData> = async data => {
+        const modal = document.getElementById("ticket-modal") as HTMLDialogElement | null;
+        const loadingModal = document.getElementById("loading-modal") as HTMLDialogElement | null;
+
+        loadingModal?.showModal();
+        setLoading(true);
+
+        if (data.pincode.length < 6) {
+            setError('Pincode must be 6 digits or more');
+            loadingModal?.close();
+            modal?.showModal();
+            setTimeout(() => {
+                modal?.close();
+                setError('');
+            }, 2500);
+            setLoading(false);
+            return;
+        }
+
+        if (data.pincode !== user?.pincode) {
+            setError('Incorrect Pincode');
+            loadingModal?.close();
+            modal?.showModal();
+            setTimeout(() => {
+                modal?.close();
+                setError('');
+            }, 2500);
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const res = await axios.post('/api/new-ticket', data);
+
+            if (res.status === 200) {
+                setSuccess('Your request is currently being reviewed');
+                loadingModal?.close();
+                modal?.showModal();
+                setTimeout(() => {
+                    modal?.close();
+                    setSuccess('');
+                    reset();
+                }, 2500);
+                setLoading(false);
+            }
+        } catch (error) {
+            setError(`Couldn't add new ticket`);
+            loadingModal?.close();
+            modal?.showModal();
+            setTimeout(() => {
+                modal?.close();
+                setError('');
+            }, 2500);
+            setLoading(false);
+        }
+    }
+
     return (
         <div className='py-4 md:pb-24 lg:pb-0 pb-[600px]'>
             <div className="mycontainer">
                 <div className="px-4">
-                    <div className=''>
-                        <div className='bg-white rounded-lg flex flex-col gap-4 p-4 md:max-w-md md:my-0 md:mx-auto'>
+                    <div>
+                        <dialog id="ticket-modal" className="modal">
+                            <div className="modal-box">
+                                {error && <div className='flex items-center justify-center gap-3'>
+                                    <GiCancel size={40} color='#ef4444' />
+                                    <p className='text-red-500'>{error}</p>
+                                </div>}
+                                {success && <div className='flex items-center justify-center gap-3'>
+                                    <GrStatusGood size={40} color='#22c55e' />
+                                    <p className='text-green-500'>{success}</p>
+                                </div>}
+                            </div>
+                        </dialog>
+
+                        <dialog id="loading-modal" className="modal bg-[#004080]">
+                            <div className='flex items-center justify-center gap-3'>
+                                <span className="loading loading-ring loading-lg bg-white"></span>
+                            </div>
+                        </dialog>
+
+                        <div className=' flex flex-col gap-4  md:max-w-md md:my-0 md:mx-auto bg-white p-8 rounded shadow-md w-full max-w-md'>
                             <div>
-                                <p>New Ticket</p>
+                                <p className='text-2xl font-bold mb-6 text-primary'>New Ticket</p>
                             </div>
 
-                            <form action="" className='flex flex-col gap-5'>
+                            <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
                                 <div className='flex flex-col gap-2'>
-                                    <p className='text-gray-400 text-[13px] md:text-[16px]'>Ticket Type</p>
-
-                                    <select name="" id="" className='w-full p-2 rounded-md border-[1px] border-gray-400 bg-transparent'>
-                                        <option value="" defaultChecked>Select Loan Type</option>
-                                        <option value="">My Account</option>
+                                    <p className=''>Ticket Type</p>
+                                    <select {...register('type', { required: true })} className='w-full p-2 border rounded bg-[#e2ebf7]'>
+                                        <option value="" defaultChecked>Select Ticket Type</option>
+                                        <option value="Account">My Account</option>
                                         <option value="Transfer">Transfer</option>
                                         <option value="Security">Security</option>
                                     </select>
                                 </div>
                                 <div className='flex flex-col gap-2'>
-                                    <p className='text-gray-400 text-[13px] md:text-[16px]'>More information</p>
-
-                                    <textarea name="" id="" rows={8} placeholder='Well detailed' className='p-2 bg-[#e2ebf7] rounded-md placeholder:text-gray-400 placeholder:text-[13px] focus:outline-none border-[1px] border-gray-400'></textarea>
+                                    <p className=''>More information</p>
+                                    <textarea {...register('details', { required: true })} rows={8} placeholder='Well detailed' className='w-full p-2 border rounded bg-[#e2ebf7]'></textarea>
                                 </div>
                                 <div className='flex flex-col gap-2'>
-                                    <p className='text-gray-400 text-[13px] md:text-[16px]'>Account password</p>
-
-                                    <input type="text" name="" id="" placeholder='*****' className='p-2 rounded-md placeholder:text-gray-400 bg-[#e2ebf7] placeholder:text-[13px] focus:outline-none border-[1px] border-gray-400' />
+                                    <p className=''>Account Pincode</p>
+                                    <input type="text" {...register('pincode', { required: true })} placeholder='*****' className='w-full p-2 border rounded bg-[#e2ebf7]' />
                                 </div>
-
                                 <div>
                                     <button type="submit" className='text-[13px] text-white bg-primary p-[10px] rounded-md'>
-                                        Create new ticket
+                                        {loading ? <span className="loading loading-spinner loading-sm bg-white"></span>
+                                            : "Create new ticket"}
                                     </button>
                                 </div>
                             </form>

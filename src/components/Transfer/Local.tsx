@@ -29,7 +29,7 @@ const Local = () => {
         e.preventDefault();
         setLoading(true)
         try {
-            const response = await axios.post('https://crestbankplc.vercel.app/api/transfer', {
+            const response = await axios.post('http://localhost:3000/api/transfer', {
                 type: 'Local Transfer',
                 amount: parseFloat(amount),
                 payment_account: paymentAccount,

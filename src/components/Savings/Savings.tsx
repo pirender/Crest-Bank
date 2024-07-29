@@ -1,11 +1,10 @@
 'use client'
-import React from 'react'
-import { formatNumber, formatDate, fetcherSavings } from '../../lib/util';
+import React, { useEffect, useState } from 'react'
+import { formatNumber, formatDate } from '../../lib/util';
 import { FaPlus } from "react-icons/fa6";
 import useSWR from 'swr';
 import { FaChevronDown } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
-import { useSession } from 'next-auth/react';
 
 interface Transaction {
     id: string;
@@ -23,19 +22,34 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const Savings = () => {
     const { data } = useSWR("/api/savings", fetcher);
+    const { data: user } = useSWR("/api/get-user", fetcher);
+    const [loading, setLoading] = useState(true)
+
+
+
+    useEffect(() => {
+        if (data && user) {
+            setLoading(false)
+        }
+    }, [data, user]);
+
     let amount = 0;
-    if(data){
+    if (data) {
         data.transactions.map((data: Transaction, index: any) => {
             return amount = data.fields.amount;
         })
     }
-    const { data: user } = useSWR("/api/get-user", fetcher);
 
     return (
         <div className='py-4 md:pb-24 lg:pb-0 pb-[600px]'>
             <div className="mycontainer md:hidden">
                 <div className="px-4">
                     <div>
+                        <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
+                            <div className='flex items-center justify-center gap-3'>
+                                <span className="loading loading-ring loading-lg bg-white"></span>
+                            </div>
+                        </dialog>
                         <div>
                             {/* top */}
                             <div className='flex flex-col md:flex-row gap-6'>
@@ -145,6 +159,11 @@ const Savings = () => {
             <div className="hidden md:block">
                 <div className="px-4">
                     <div>
+                        <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
+                            <div className='flex items-center justify-center gap-3'>
+                                <span className="loading loading-ring loading-lg bg-white"></span>
+                            </div>
+                        </dialog>
                         <div>
                             {/* top */}
                             <div className='flex flex-col md:flex-row gap-6'>

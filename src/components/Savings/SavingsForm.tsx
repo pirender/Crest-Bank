@@ -15,16 +15,16 @@ const SavingsForm = () => {
             <div className="mycontainer">
                 <div className="px-4">
                     <div className=''>
-                        <div className='bg-white rounded-lg flex flex-col gap-4 p-4 md:max-w-md md:my-0 md:mx-auto'>
+                        <div className='flex flex-col gap-4 md:max-w-md md:my-0 md:mx-auto bg-white p-8 rounded shadow-md w-full max-w-md'>
                             <div>
-                                <p>New Savings</p>
+                                <p className='t-2xl font-bold mb-6 text-primary'>New Savings</p>
                             </div>
 
                             <form action="" className='flex flex-col gap-5'>
                                 <div className='flex flex-col gap-2'>
-                                    <p className='text-gray-400 text-[13px] md:text-[16px]'>Amount Savings Plan</p>
+                                    <p className=''>Amount Savings Plan</p>
 
-                                    <select name="" id="" className='w-full p-2 rounded-md border-[1px] border-gray-400 bg-transparent'>
+                                    <select name="" id="" className='w-full bg-[#e2ebf7] p-2 border rounded'>
                                         <option value="" defaultChecked>Select Savings Plan</option>
                                         <option value="">$1000 (ROI 7%)</option>
                                         <option value="">$2500 (ROI 32%)</option>
@@ -33,9 +33,9 @@ const SavingsForm = () => {
                                     </select>
                                 </div>
                                 <div className='flex flex-col gap-2'>
-                                    <p className='text-gray-400 text-[13px] md:text-[16px]'>Settlement Account</p>
+                                    <p className=''>Settlement Account</p>
 
-                                    <select name="" id="" className='w-full p-2 rounded-md border-[1px] border-gray-400 bg-transparent'>
+                                    <select name="" id="" className='w-full bg-[#e2ebf7] p-2 border rounded'>
                                         <option value="" defaultChecked>Select Settlement Account</option>
                                         <option value="">({user?.savings_account}) Savings: {user?.balance_savings}</option>
                                         <option value="">({user?.current_account}) Current: {user?.balance_current}</option>
@@ -43,9 +43,9 @@ const SavingsForm = () => {
                                     </select>
                                 </div>
                                 <div className='flex flex-col gap-2'>
-                                    <p className='text-gray-400 text-[13px] md:text-[16px]'>Savings Type</p>
+                                    <p className=''>Savings Type</p>
 
-                                    <select name="" id="" className='w-full p-2 rounded-md border-[1px] border-gray-400 bg-transparent'>
+                                    <select name="" id="" className='w-full bg-[#e2ebf7] p-2 border rounded'>
                                         <option value="" defaultChecked>Select Savings Type</option>
                                         <option value="">Business Savings</option>
                                         <option value="">Individual Savings</option>
@@ -53,9 +53,9 @@ const SavingsForm = () => {
                                     </select>
                                 </div>
                                 <div className='flex flex-col gap-2'>
-                                    <p className='text-gray-400 text-[13px] md:text-[16px]'>Savings Duration</p>
+                                    <p className=''>Savings Duration</p>
 
-                                    <select name="" id="" className='w-full p-2 rounded-md border-[1px] border-gray-400 bg-transparent'>
+                                    <select name="" id="" className='w-full bg-[#e2ebf7] p-2 border rounded'>
                                         <option value="" defaultChecked>Select Savings Duration</option>
                                         <option value="">7 Days (1.5% interest)</option>
                                         <option value="">2 Weeks (3% interest)</option>
@@ -65,9 +65,9 @@ const SavingsForm = () => {
                                     </select>
                                 </div>
                                 <div className='flex flex-col gap-2'>
-                                    <p className='text-gray-400 text-[13px] md:text-[16px]'>Account password</p>
+                                    <p className=''>Account Pincode</p>
 
-                                    <input type="text" name="" id="" placeholder='*****' className='p-2 rounded-md placeholder:text-gray-400 placeholder:text-[13px] focus:outline-none border-[1px] border-gray-400' />
+                                    <input type="text" name="" id="" placeholder='*****' className='w-full bg-[#e2ebf7] p-2 border rounded' />
                                 </div>
 
                                 <div>

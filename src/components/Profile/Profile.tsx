@@ -10,7 +10,14 @@ const Profile = () => {
     const [updateError, setUpdateError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [modal, setModal] = useState(true);
     const inputFileRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (data) {
+            setModal(false)
+        }
+    }, [data]);
 
     const [userDetails, setUserDetails] = useState({
         first_name: '',
@@ -124,6 +131,11 @@ const Profile = () => {
             <div className="mycontainer md:hidden">
                 <div className="px-4">
                     <div>
+                        <dialog id="loading-modal" className={`modal bg-[#004080] ${modal ? 'opacity-100' : ''}`}>
+                            <div className='flex items-center justify-center gap-3'>
+                                <span className="loading loading-ring loading-lg bg-white"></span>
+                            </div>
+                        </dialog>
                         <div className='bg-white rounded-[8px] p-4 flex flex-col gap-5'>
                             <div>
                                 <h4 className='text-primary font-bold text-[14px]'>Account Information</h4>
@@ -226,6 +238,11 @@ const Profile = () => {
             <div className="hidden md:block">
                 <div className="px-4">
                     <div>
+                        <dialog id="loading-modal" className={`modal bg-[#004080] ${modal ? 'opacity-100' : ''}`}>
+                            <div className='flex items-center justify-center gap-3'>
+                                <span className="loading loading-ring loading-lg bg-white"></span>
+                            </div>
+                        </dialog>
                         <div className='bg-white rounded-[8px] p-4 flex flex-col gap-5'>
                             <div>
                                 <h4 className='text-primary font-bold text-[14px]'>Account Information</h4>

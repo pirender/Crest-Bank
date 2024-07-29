@@ -8,13 +8,33 @@ const base = Airtable.base(process.env.AIRTABLE_BASE_ID!);
 
 export const users = base('Users');
 export const transactions = base('Transactions');
-export const loans = base('Loans');
+export const loan = base('Loans');
 export const ticket = base('Tickets');
 export const savings = base('Savings');
 export const kyc = base('Kyc');
 
 export const getTransactions = async (id: string) => {
     const records = await base('Transactions').select({
+      filterByFormula: `{user_id} = '${id}'`,
+    }).all();
+    return records.map(record => ({
+      id: record.id,
+      fields: record.fields,
+    }));
+};
+
+export const getTickets = async (id: string) => {
+    const records = await ticket.select({
+      filterByFormula: `{user_id} = '${id}'`,
+    }).all();
+    return records.map(record => ({
+      id: record.id,
+      fields: record.fields,
+    }));
+};
+
+export const getLoans = async (id: string) => {
+    const records = await loan.select({
       filterByFormula: `{user_id} = '${id}'`,
     }).all();
     return records.map(record => ({

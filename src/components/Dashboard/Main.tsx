@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import useSWR from "swr";
 import { FaPlus } from "react-icons/fa6";
 import { formatNumber, formatDate } from '../../lib/util';
@@ -26,47 +26,55 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const Main = () => {
     const { data } = useSWR("/api/transactions", fetcher);
     const { data: user } = useSWR("/api/get-user", fetcher);
+    const [loading, setLoading] = useState(true)
+
+
+    useEffect(() => {
+        if (data && user) {
+            setLoading(false)
+        }
+    }, [data, user]);
 
     let inflow = 0;
-    if(data){
-       inflow = data.transactions.reduce((acc: any, transaction: Transaction) => {
+    if (data) {
+        inflow = data.transactions.reduce((acc: any, transaction: Transaction) => {
             return acc + transaction.fields.amount;
         }, 0)
     }
 
     let balance = 0;
-    if(user){
-        if(user.account_type === 'Savings Account'){
+    if (user) {
+        if (user.account_type === 'Savings Account') {
             balance = user.balance_savings;
-        }else if(user.account_type === 'Current Account'){
+        } else if (user.account_type === 'Current Account') {
             balance = user.balance_current;
-        }else if(user.account_type === 'Fixed Deposit Account'){
+        } else if (user.account_type === 'Fixed Deposit Account') {
             balance = user.balance_fixed_deposit;
-        }else if(user.account_type === 'Checking Account'){
+        } else if (user.account_type === 'Checking Account') {
             balance = user.balance_checking;
-        }else if(user.account_type === 'Non Resident Account'){
+        } else if (user.account_type === 'Non Resident Account') {
             balance = user.balance_non_resident;
-        }else if(user.account_type === 'Joint Account'){
+        } else if (user.account_type === 'Joint Account') {
             balance = user.balance_joint;
-        }else {
+        } else {
             balance = 0;
         }
     }
     let account = 0;
-    if(user){
-        if(user.account_type === 'Savings Account'){
+    if (user) {
+        if (user.account_type === 'Savings Account') {
             account = user.savings_account;
-        }else if(user.account_type === 'Current Account'){
+        } else if (user.account_type === 'Current Account') {
             account = user.current_account;
-        }else if(user.account_type === 'Fixed Deposit Account'){
+        } else if (user.account_type === 'Fixed Deposit Account') {
             account = user.fixed_deposit_account;
-        }else if(user.account_type === 'Checking Account'){
+        } else if (user.account_type === 'Checking Account') {
             account = user.checking_account;
-        }else if(user.account_type === 'Non Resident Account'){
+        } else if (user.account_type === 'Non Resident Account') {
             account = user.non_resident_account;
-        }else if(user.account_type === 'Joint Account'){
+        } else if (user.account_type === 'Joint Account') {
             account = user.joint_account;
-        }else {
+        } else {
             account = 0;
         }
     }
@@ -74,6 +82,11 @@ const Main = () => {
     return (
         <div className='md:pt-6 pt-6 pb-6 md:pb-24'>
             <div className="mycontainer md:hidden">
+                <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
+                    <div className='flex items-center justify-center gap-3'>
+                        <span className="loading loading-ring loading-lg bg-white"></span>
+                    </div>
+                </dialog>
                 <div className="px-4">
                     <div>
                         <div className='flex flex-col gap-6'>
@@ -132,7 +145,7 @@ const Main = () => {
                                             <div className='flex justify-between items-center'>
                                                 <p className='text-gray-500 text-[13px] md:text-[14px]'>Loan Balance:</p>
 
-                                                <p className='text-[14px] text-[#805dca]'>${user ?formatNumber(user?.loan_balance) : formatNumber(0)}</p>
+                                                <p className='text-[14px] text-[#805dca]'>${user ? formatNumber(user?.loan_balance) : formatNumber(0)}</p>
                                             </div>
                                             <div className='flex justify-between items-center'>
                                                 <p className='text-gray-500 text-[13px] md:text-[14px]'>Savings Balance:</p>
@@ -249,6 +262,11 @@ const Main = () => {
                 </div>
             </div>
             <div className="hidden md:block">
+                <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
+                    <div className='flex items-center justify-center gap-3'>
+                        <span className="loading loading-ring loading-lg bg-white"></span>
+                    </div>
+                </dialog>
                 <div className="px-4">
                     <div>
                         <div className='flex flex-col gap-6'>

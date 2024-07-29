@@ -1,41 +1,28 @@
 // app/bank-statement/page.tsx
 'use client';
 
+import { containsTransfer, formatDate, formatNumber } from '@/lib/util';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
-const transactions = [
-  {
-    sn: 1,
-    id: '66618db75cd20',
-    amount: '+$2,500.00',
-    type: 'Savings',
-    paymentAccount: '36378180787 (Current Account)',
-    status: 'Processing',
-    date: '2024-06-06 11:21:43',
-  },
-  {
-    sn: 2,
-    id: '6659f0e38f86a',
-    amount: '+$50,000.00',
-    type: 'Credit',
-    paymentAccount: '36378180787 (Current Account)',
-    status: 'Completed',
-    date: '2024-05-31 08:46:00',
-  },
-  {
-    sn: 3,
-    id: '6659eff8e07d1',
-    amount: '+$50,000.00',
-    type: 'Crypto Deposit',
-    paymentAccount: '36378180787 (Current Account)',
-    status: 'Completed',
-    date: '2024-05-31 16:42:48',
-  },
-];
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+
 
 const BankStatement: React.FC = () => {
+  const { data } = useSWR("/api/transactions", fetcher);
+  const [loading, setLoading] = useState(true)
+
   const router = useRouter();
+
+  useEffect(() => {
+    if(data){
+      setLoading(false)
+    }
+  }, [data]);
+
+
 
   const handleViewReceipt = (id: string) => {
     router.push(`/dashboard/statements/statement?id=${id}`);
@@ -43,6 +30,11 @@ const BankStatement: React.FC = () => {
 
   return (
     <div className="md:pt-6 lg:pb-0 pb-[600px]">
+      <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
+        <div className='flex items-center justify-center gap-3'>
+          <span className="loading loading-ring loading-lg bg-white"></span>
+        </div>
+      </dialog>
       <div className="bg-white p-8 rounded shadow-md w-full max-w-6xl">
         <div className="flex flex-col gap-3 md:gap-0 md:flex-row justify-between md:items-center mb-4">
           <h2 className="text-2xl font-bold text-primary">Bank Statement</h2>
@@ -53,7 +45,7 @@ const BankStatement: React.FC = () => {
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M5.516 7.548A7.489 7.489 0 001 12a7.5 7.5 0 1012-6.032V2a8 8 0 11-8 0v5H2.5a5.5 5.5 0 110 11H7v-2H2.5a3.5 3.5 0 100-7H8v5h6a8 8 0 10-6-14zM8 10V6H6v4h2zm4 0V6h-2v4h2z"/>
+                  <path d="M5.516 7.548A7.489 7.489 0 001 12a7.5 7.5 0 1012-6.032V2a8 8 0 11-8 0v5H2.5a5.5 5.5 0 110 11H7v-2H2.5a3.5 3.5 0 100-7H8v5h6a8 8 0 10-6-14zM8 10V6H6v4h2zm4 0V6h-2v4h2z" />
                 </svg>
               </div>
             </div>
@@ -75,21 +67,21 @@ const BankStatement: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {transactions.map((transaction) => (
-                <tr key={transaction.sn}>
-                  <td className="border-b py-2">{transaction.sn}</td>
+              {data?.transactions?.map((transaction: any, index: any) => (
+                <tr key={transaction.id}>
+                  <td className="border-b py-2">{index + 1}</td>
                   <td className="border-b py-2">{transaction.id}</td>
-                  <td className="border-b py-2 text-green-500">{transaction.amount}</td>
-                  <td className="border-b py-2">{transaction.type}</td>
+                  <td className={`border-b py-2 text-green-500 ${containsTransfer(transaction.fields.type) ? 'text-red-500' : ''}`}>{containsTransfer(transaction.fields.type) ? '-$' + formatNumber(transaction.fields.amount) : '+$' + formatNumber(transaction.fields.amount)}</td>
+                  <td className="border-b py-2">{transaction.fields.type}</td>
                   <td className="border-b py-2">
-                    <span className="bg-purple-100 text-purple-700 py-1 px-2 rounded-full text-sm">{transaction.paymentAccount}</span>
+                    <span className="bg-purple-100 text-purple-700 py-1 px-2 rounded-full text-sm">{transaction.fields.payment_account}</span>
                   </td>
                   <td className="border-b py-2">
-                    <span className={`py-1 px-2 rounded-full text-sm ${transaction.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                      {transaction.status}
+                    <span className={`py-1 px-2 rounded-full text-sm ${transaction.fields.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                      {transaction.fields.status}
                     </span>
                   </td>
-                  <td className="border-b py-2">{transaction.date}</td>
+                  <td className="border-b py-2">{formatDate(transaction.fields.date)}</td>
                   <td className="border-b py-2">
                     <button
                       className="bg-blue-500 text-white px-3 py-1 rounded"

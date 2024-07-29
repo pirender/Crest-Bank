@@ -1,6 +1,5 @@
 'use client'
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -71,8 +70,8 @@ const Settings = () => {
                 }
                 setTimeout(() => {
                     modal?.close();
+                    setStep(2);
                 }, 2500);
-                setStep(2);
             }
         } catch (error) {
             setError('An error occurred while updating the password');
@@ -85,10 +84,10 @@ const Settings = () => {
             }
             setTimeout(() => {
                 modal?.close();
+                setCurrentPassword('')
+                setNewPassword('')
+                setVerifyNewPassword('')
             }, 2500);
-            setCurrentPassword('')
-            setNewPassword('')
-            setVerifyNewPassword('')
         }
     };
 
@@ -206,7 +205,7 @@ const Settings = () => {
                                                 <FontAwesomeIcon icon={currentPasswordVisible ? faEyeSlash : faEye} />
                                             </span>
 
-                                            
+
                                         </div>
                                         <div className='relative flex flex-col gap-3'>
                                             <label className='text-gray-400 text-[14px]'>New Password</label>
