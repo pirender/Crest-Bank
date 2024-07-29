@@ -18,13 +18,13 @@ export async function POST(request: Request) {
         }).firstPage();
 
         if (records.length === 0) {
-            return Response.json({ message: 'User not found.' }, { status: 404 });
+            return Response.json({ error: 'User not found.' }, { status: 404 });
         }
 
         const user = records[0];
 
         if (user.fields.password !== password) {
-            return Response.json({ message: 'Invalid password.' }, { status: 401 });
+            return Response.json({ error: 'Invalid password.' }, { status: 401 });
         }
 
         const verificationCode = Math.floor(100000 + Math.random() * 900000);

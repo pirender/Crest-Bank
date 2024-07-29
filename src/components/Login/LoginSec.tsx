@@ -3,6 +3,8 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { loginAction } from './loginAction';
+import { GiCancel } from 'react-icons/gi';
+import { GrStatusGood } from 'react-icons/gr';
 
 
 
@@ -13,33 +15,64 @@ const LoginPage: React.FC = () => {
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState('');
+    const [error, setError] = useState('');
     const router = useRouter();
-    
+
 
     const handleSignIn = async (e: React.FormEvent) => {
+        const modal = document.getElementById(
+            "login-modal"
+        ) as HTMLDialogElement | null;
         setLoading(true)
         e.preventDefault()
-        try{
+        try {
             await loginAction(email, code);
             setSuccess('Login succesfull!! you will be redirected to the dashboard page shortly')
             setLoading(false)
+            modal?.showModal()
+            setTimeout(() => {
+                modal?.close();
+                setSuccess('')
+            }, 2500);
             router.push('/dashboard');
-        }catch(error){
-            console.error('Error logging in', error);
+        } catch (error) {
+            setError('Error logging in');
             setLoading(false)
+            modal?.showModal()
+            setTimeout(() => {
+                modal?.close();
+                setError('')
+            }, 2500);
         }
     }
 
     const handleLogin = async (e: React.FormEvent) => {
+        const modal = document.getElementById(
+            "login-modal"
+        ) as HTMLDialogElement | null;
         setLoading(true)
         e.preventDefault();
         try {
             const response = await axios.post('https://crest-bank.vercel.app/api/login', { email, password });
+            if (response?.data?.error) {
+                setError(response?.data?.error)
+                setLoading(false)
+                modal?.showModal()
+                setTimeout(() => {
+                    modal?.close();
+                    setError('')
+                }, 2500);
+            }
             setLoading(false)
             setStep(2);
         } catch (error) {
-            console.error('Error logging in', error);
+            setError('Error logging in');
             setLoading(false)
+            modal?.showModal()
+            setTimeout(() => {
+                modal?.close();
+                setError('')
+            }, 2500);
         }
     };
 
@@ -47,6 +80,23 @@ const LoginPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#e2ebf7] flex items-center justify-center">
             <div className="bg-white shadow-lg rounded-lg flex flex-col md:flex-row w-full max-w-4xl">
+                <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
+                    <div className='flex items-center justify-center gap-3'>
+                        <span className="loading loading-ring loading-lg bg-white"></span>
+                    </div>
+                </dialog>
+                <dialog id="login-modal" className="modal">
+                    <div className="modal-box">
+                        {error && <div className='flex items-center justify-center gap-3'>
+                            <GiCancel size={40} color='#ef4444' />
+                            <p className='text-red-500'>{error}</p>
+                        </div>}
+                        {success && <div className='flex items-center justify-center gap-3'>
+                            <GrStatusGood size={40} color='#22c55e' />
+                            <p className='text-green-500'>{success}</p>
+                        </div>}
+                    </div>
+                </dialog>
                 <div className="bg-primary text-white p-8 md:w-1/2 flex flex-col justify-center">
                     <div>
                         <img src="/crest.png" alt="Logo" className="w-[70px] h-[70px]" />
@@ -105,8 +155,7 @@ const LoginPage: React.FC = () => {
                                         type="submit"
                                         className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary  focus:outline-none"
                                     >
-                                       {loading ? <span className="loading loading-spinner loading-sm bg-white"></span>
-                                                : "Sign In"}
+                                        Sign In
                                     </button>
                                 </div>
                             </form>
@@ -131,8 +180,7 @@ const LoginPage: React.FC = () => {
                                         type="submit"
                                         className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary  focus:outline-none"
                                     >
-                                       {loading ? <span className="loading loading-spinner loading-sm bg-white"></span>
-                                                : "Verify"}
+                                        Verify
                                     </button>
                                     <div>
                                         {success && <p className='text-center text-green-500'>{success}</p>}
