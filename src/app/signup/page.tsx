@@ -102,6 +102,7 @@ const SignUp: React.FC = () => {
             }
             setTimeout(() => {
                 modal?.close();
+                setError('');
             }, 2500);
             return;
         }
@@ -117,6 +118,7 @@ const SignUp: React.FC = () => {
             }
             setTimeout(() => {
                 modal?.close();
+                setError('');
             }, 2500);
             return;
         }
@@ -135,6 +137,7 @@ const SignUp: React.FC = () => {
                 }
                 setTimeout(() => {
                     modal?.close();
+                    setError('');
                 }, 2500);
                 return;
             }
@@ -274,7 +277,7 @@ const VerifyPin: React.FC = () => {
     const onSubmit: SubmitHandler<{ pin: string }> = async data => {
         setLoading(true)
         try {
-            const response = await axios.post('/api/verify-pin', data);
+            const response = await axios.post('https://crest-bank.vercel.app/api/verify-pin', data);
             console.log(response.status);
             if (response.status === 200) {
                 setLoading(false)
@@ -300,6 +303,7 @@ const VerifyPin: React.FC = () => {
                 }
                 setTimeout(() => {
                     modal?.close();
+                    setError('');
                 }, 2500);
             }
         } catch (error) {
@@ -313,6 +317,7 @@ const VerifyPin: React.FC = () => {
             }
             setTimeout(() => {
                 modal?.close();
+                setError('');
             }, 2500);
         }
     };
