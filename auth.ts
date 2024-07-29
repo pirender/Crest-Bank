@@ -115,7 +115,7 @@ const config = {
         session: async ({ session, token }) => {
             if (token) {
                 // Fetch the latest user data from the database
-                const response = await axios.get(`http://localhost:3000/api/session-user?id=${token.sub}`);
+                const response = await axios.get(`https://crest-bank.vercel.app/api/session-user?id=${token.sub}`);
                 const user = await response.data;
                 session.user.id = token.sub as string;
                 session.user.isApproved = user?.isApproved as string;
