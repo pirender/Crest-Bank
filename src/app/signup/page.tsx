@@ -33,6 +33,8 @@ const SignUp: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState('');
 
+
+
     useEffect(() => {
         // Fetch countries with ISO2 codes
         axios.get('https://api.countrystatecity.in/v1/countries', {
@@ -95,11 +97,10 @@ const SignUp: React.FC = () => {
             setError('Pincode must be 6 digits or more');
             setLoading(false)
             const modal = document.getElementById(
-                "my_modal_1"
+                "signup-modal"
             ) as HTMLDialogElement | null;
-            if (modal) {
-                modal.showModal()
-            }
+
+            modal?.showModal()
             setTimeout(() => {
                 modal?.close();
                 setError('');
@@ -111,15 +112,13 @@ const SignUp: React.FC = () => {
             setError('Passwords do not match');
             setLoading(false)
             const modal = document.getElementById(
-                "my_modal_1"
+                "signup-modal"
             ) as HTMLDialogElement | null;
-            if (modal) {
-                modal.showModal()
-            }
+            modal?.showModal()
             setTimeout(() => {
                 modal?.close();
                 setError('');
-            }, 2500);
+            }, 2500)
             return;
         }
 
@@ -165,7 +164,7 @@ const SignUp: React.FC = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
 
-                <dialog id="my_modal_1" className="modal">
+                <dialog id="signup-modal" className="modal">
                     <div className="modal-box">
                         {error && <div className='flex items-center justify-center gap-3'>
                             <GiCancel size={40} color='#ef4444' />
@@ -175,6 +174,11 @@ const SignUp: React.FC = () => {
                             <GrStatusGood size={40} color='#22c55e' />
                             <p className='text-green-500'>{success}</p>
                         </div>}
+                    </div>
+                </dialog>
+                <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
+                    <div className='flex items-center justify-center gap-3'>
+                        <span className="loading loading-ring loading-lg bg-white"></span>
                     </div>
                 </dialog>
                 {step === 1 && (
@@ -277,17 +281,15 @@ const VerifyPin: React.FC = () => {
     const onSubmit: SubmitHandler<{ pin: string }> = async data => {
         setLoading(true)
         try {
-            const response = await axios.post('https://crest-bank.vercel.app/api/verify-pin', data);
+            const response = await axios.post('/api/verify-pin', data);
             console.log(response.status);
             if (response.status === 200) {
                 setLoading(false)
                 setSuccess('Pin verified! Redirecting to login...');
                 const modal = document.getElementById(
-                    "my_modal_1"
+                    "signup-verify-modal"
                 ) as HTMLDialogElement | null;
-                if (modal) {
-                    modal.showModal()
-                }
+                modal?.showModal()
                 setTimeout(() => {
                     modal?.close();
                     router.push('/login')
@@ -296,11 +298,11 @@ const VerifyPin: React.FC = () => {
                 setLoading(false)
                 setError('Invalid pin. Please try again.');
                 const modal = document.getElementById(
-                    "my_modal_1"
+                    "signup-verify-modal"
                 ) as HTMLDialogElement | null;
-                if (modal) {
-                    modal.showModal()
-                }
+
+                modal?.showModal()
+
                 setTimeout(() => {
                     modal?.close();
                     setError('');
@@ -310,11 +312,11 @@ const VerifyPin: React.FC = () => {
             console.error('Error verifying pin:', error);
             setError('An error occurred. Please try again.');
             const modal = document.getElementById(
-                "my_modal_1"
+                "signup-verify-modal"
             ) as HTMLDialogElement | null;
-            if (modal) {
-                modal.showModal()
-            }
+
+            modal?.showModal()
+
             setTimeout(() => {
                 modal?.close();
                 setError('');
@@ -333,7 +335,7 @@ const VerifyPin: React.FC = () => {
                 <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">{loading ? <span className="loading loading-spinner loading-sm bg-white"></span>
                     : "Verify"}</button>
             </form>
-            <dialog id="my_modal_1" className="modal">
+            <dialog id="signup-verify-modal" className="modal">
                 <div className="modal-box">
                     {error && <div className='flex items-center justify-center gap-3'>
                         <GiCancel size={40} color='#ef4444' />

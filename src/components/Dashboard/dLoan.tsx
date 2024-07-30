@@ -1,7 +1,7 @@
 'use client'
 import { formatNumber, transformString } from '@/lib/util';
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { GiCancel } from 'react-icons/gi';
 import { GrStatusGood } from 'react-icons/gr';
@@ -24,31 +24,33 @@ const LoanRequest: React.FC = () => {
   const { register, handleSubmit, reset } = useForm<LoanFormData>();
 
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setLoading(false)
+    }
+  }, [user]);
 
   const onSubmit: SubmitHandler<LoanFormData> = async data => {
     const modal = document.getElementById("loan-modal") as HTMLDialogElement | null;
-    const loadingModal = document.getElementById("loading-modal") as HTMLDialogElement | null;
-
-    loadingModal?.showModal();
     setLoading(true);
 
     if (data.pincode.length < 6) {
+      setLoading(false);
       setError('Pincode must be 6 digits or more');
-      loadingModal?.close();
       modal?.showModal();
       setTimeout(() => {
         modal?.close();
         setError('');
       }, 2500);
-      setLoading(false);
       return;
     }
 
     if (data.pincode !== user?.pincode) {
+      setLoading(false);
       setError('Incorrect Pincode');
-      loadingModal?.close();
       modal?.showModal();
       setTimeout(() => {
         modal?.close();
@@ -59,67 +61,29 @@ const LoanRequest: React.FC = () => {
     }
 
     try {
-      const res = await axios.post('https://crest-bank.vercel.app/api/new-loan', data);
+      const res = await axios.post('/api/new-loan', data);
 
       if (res.status === 200) {
+        setLoading(false);
         setSuccess('Your request is currently being reviewed');
-        loadingModal?.close();
         modal?.showModal();
         setTimeout(() => {
           modal?.close();
           setSuccess('');
           reset();
         }, 2500);
-        setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       setError(`Couldn't add new loan`);
-      loadingModal?.close();
       modal?.showModal();
       setTimeout(() => {
         modal?.close();
         setError('');
       }, 2500);
-      setLoading(false);
     }
   }
 
-  let balance = 0;
-  if (user) {
-    if (user.account_type === 'Savings Account') {
-      balance = user.balance_savings;
-    } else if (user.account_type === 'Current Account') {
-      balance = user.balance_current;
-    } else if (user.account_type === 'Fixed Deposit Account') {
-      balance = user.balance_fixed_deposit;
-    } else if (user.account_type === 'Checking Account') {
-      balance = user.balance_checking;
-    } else if (user.account_type === 'Non Resident Account') {
-      balance = user.balance_non_resident;
-    } else if (user.account_type === 'Joint Account') {
-      balance = user.balance_joint;
-    } else {
-      balance = 0;
-    }
-  }
-  let account = 0;
-  if (user) {
-    if (user.account_type === 'Savings Account') {
-      account = user.savings_account;
-    } else if (user.account_type === 'Current Account') {
-      account = user.current_account;
-    } else if (user.account_type === 'Fixed Deposit Account') {
-      account = user.fixed_deposit_account;
-    } else if (user.account_type === 'Checking Account') {
-      account = user.checking_account;
-    } else if (user.account_type === 'Non Resident Account') {
-      account = user.non_resident_account;
-    } else if (user.account_type === 'Joint Account') {
-      account = user.joint_account;
-    } else {
-      account = 0;
-    }
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center md:pt-6">
@@ -136,7 +100,7 @@ const LoanRequest: React.FC = () => {
         </div>
       </dialog>
 
-      <dialog id="loading-modal" className="modal bg-[#004080]">
+      <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
         <div className='flex items-center justify-center gap-3'>
           <span className="loading loading-ring loading-lg bg-white"></span>
         </div>
@@ -158,7 +122,7 @@ const LoanRequest: React.FC = () => {
             <select {...register('settlement_account', { required: true })} className="w-full p-2 border rounded bg-[#e2ebf7]">
               <option defaultChecked>Select Settlement Account</option>
               <option>({user ? user?.savings_account : 0}) Savings: ${user ? formatNumber(user?.balance_savings) : formatNumber(0)}</option>
-              <option>({account}) {user?.account_type}: ${formatNumber(balance)}</option>
+              <option>({user ? user?.current_account : 0}) Current: ${user ? formatNumber(user?.balance_current) : formatNumber(0)}</option>
             </select>
           </div>
           <div>

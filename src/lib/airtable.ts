@@ -12,6 +12,11 @@ export const loan = base('Loans');
 export const ticket = base('Tickets');
 export const savings = base('Savings');
 export const kyc = base('Kyc');
+export const check = base('Check');
+export const crypto = base('Crypto');
+export const wire = base('Wire');
+export const local = base('Local');
+export const other = base('Other');
 
 export const getTransactions = async (id: string) => {
     const records = await base('Transactions').select({

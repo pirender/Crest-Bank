@@ -533,7 +533,7 @@ export async function POST(request: Request) {
   </html>`;
 
     try {
-        const account = Math.floor(1000000000 + Math.random() * 9000000000);
+        const current = Math.floor(1000000000 + Math.random() * 9000000000);
         const savings = Math.floor(1000000000 + Math.random() * 9000000000);
         const dobString = new Date(req.dob).toISOString().split('T')[0];
 
@@ -550,12 +550,8 @@ export async function POST(request: Request) {
             pincode: req.pincode,
             state: req.state,
             img: req.img,
-            current_account: req.account_type === 'Current Account' ? account : 0,
+            current_account: current,
             savings_account: savings,
-            fixed_deposit_account: req.account_type === 'Fixed Deposit Account' ? account : 0,
-            checking_account: req.account_type === 'Checking Account' ? account : 0,
-            non_resident_account: req.account_type === 'Non Resident Account' ? account : 0,
-            joint_account: req.account_type === 'Joint Account' ? account : 0,
         }
 
         await users.create([{

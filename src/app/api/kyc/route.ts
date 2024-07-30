@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
               front: idFront,
               back: idBack,
               user_id: user.id,
+              user_name: session.user.name as string,
             },
         }]);
 

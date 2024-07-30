@@ -1,18 +1,31 @@
 'use client'
 import { formatDate } from '@/lib/util';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import useSWR from 'swr';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 
 const ViewTickets = () => {
     const { data } = useSWR("/api/get-ticket", fetcher);
+    const [loading, setLoading] = useState(true)
+
+
+    useEffect(() => {
+        if (data) {
+            setLoading(false)
+        }
+    }, [data]);
 
     return (
         <div className='py-4 md:pb-24 lg:pb-0 pb-[600px]'>
             <div className="mycontainer">
                 <div className="px-4">
                     <div>
+                        <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
+                            <div className='flex items-center justify-center gap-3'>
+                                <span className="loading loading-ring loading-lg bg-white"></span>
+                            </div>
+                        </dialog>
                         <div className='overflow-x-auto'>
                             <table className='w-[920px]'>
                                 <thead>

@@ -28,6 +28,10 @@ export const containsTransfer = (str) => {
   return str.toLowerCase().includes('transfer');
 }
 
+export const extractAmount = (input) => {
+  const match = input.match(/\$([0-9]+)/);
+  return match ? match[1] : '';
+};
 
 export async function fetcherSavings(url) {
   const response = await fetch(url);

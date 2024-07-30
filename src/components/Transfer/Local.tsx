@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { GrStatusGood } from "react-icons/gr";
 import { GiCancel } from "react-icons/gi";
@@ -11,102 +11,147 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const Local = () => {
     const { data } = useSWR("/api/get-user", fetcher);
-
     const [amount, setAmount] = useState('');
-    const [paymentAccount, setPaymentAccount] = useState('');
-    const [recipientName, setRecipientName] = useState('');
-    const [recipientAccount, setRecipientAccount] = useState('');
-    const [recipientBank, setRecipientBank] = useState('');
     const [details, setDetails] = useState('');
-    const [status, setStatus] = useState('');
+    const [account_number, setAccountNumber] = useState('');
+    const [account_name, setAccountName] = useState('');
+    const [payment_account, setPaymentAccount] = useState('');
+    const [bank_name, setBankName] = useState('');
+    const [pincode, setPinCode] = useState('');
+    const [step, setStep] = useState(1);
+    const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const router = useRouter()
-    // modal?.showModal();
+
+    useEffect(() => {
+        if (data) {
+            setLoading(false)
+        }
+    }, [data]);
+
+    const setStepFunc = (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true)
+        setTimeout(() => {
+            setLoading(false)
+            setStep(2)
+        }, 3000);
+    }
 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const modal = document.getElementById(
+            "local-modal"
+        ) as HTMLDialogElement | null;
         setLoading(true)
-        try {
-            const response = await axios.post('http://localhost:3000/api/transfer', {
-                type: 'Local Transfer',
-                amount: parseFloat(amount),
-                payment_account: paymentAccount,
-                recipient_name: recipientName,
-                recipient_account: recipientAccount,
-                recipient_bank: recipientBank,
-                details: details,
-            });
-            setStatus(response.data.message);
-            setLoading(false)
-            const modal = document.getElementById(
-                "my_modal_1"
-            ) as HTMLDialogElement | null;
-            if (modal) {
-                modal.showModal()
-            }
-            setAmount('')
-            setRecipientAccount('')
-            setRecipientBank('')
-            setRecipientName('')
-            setPaymentAccount('')
-            setDetails('')
+
+        if (pincode.length < 6) {
+            setLoading(false);
+            setError('Pincode must be 6 digits or more');
+            modal?.showModal();
             setTimeout(() => {
                 modal?.close();
+                setError('');
             }, 2500);
-            router.push('/dashboard')
-        } catch (error: any) {
-            if (error) {
-                setError('An unexpected error occurred');
+            return;
+        }
+
+        if (pincode !== data?.pincode) {
+            setLoading(false);
+            setError('Incorrect Pincode');
+            modal?.showModal();
+            setTimeout(() => {
+                modal?.close();
+                setError('');
+            }, 2500);
+            setLoading(false);
+            return;
+        }
+        try {
+
+            const response = await axios.post('/api/local-transfer', {
+                amount,
+                details,
+                account_number,
+                account_name,
+                payment_account,
+                bank_name
+            });
+
+            const id = await response.data.id;
+            const err = await response.data.error;
+            const message = await response.data.message;
+
+            if (id) {
+                if (message) {
+                    setLoading(false)
+                    setSuccess(message)
+                    modal?.showModal()
+                    setTimeout(() => {
+                        setSuccess('');
+                        setAmount('')
+                        setAccountNumber('')
+                        setPaymentAccount('')
+                        setAccountName('')
+                        setDetails('')
+                        setBankName('')
+                        setPinCode('')
+                        modal?.close();
+                        router.push(`/dashboard/statements/statement?id=${id}`);
+                    }, 2500);
+                }
             }
+            if (err) {
+                setLoading(false);
+                setError(err);
+                modal?.showModal();
+                setTimeout(() => {
+                    modal?.close();
+                    setError('');
+                    setPinCode('')
+                    setStep(1)
+                }, 2500);
+            }
+        } catch (error) {
+            setLoading(false);
+            setError(`Couldn't make transfer`);
+            modal?.showModal();
+            setTimeout(() => {
+                modal?.close();
+                setError('');
+                setPinCode('')
+                setStep(1)
+            }, 2500);
         }
     };
 
-    let balance = 0;
-    if (data) {
-        if (data.account_type === 'Savings Account') {
-            balance = data.balance_savings;
-        } else if (data.account_type === 'Current Account') {
-            balance = data.balance_current;
-        } else if (data.account_type === 'Fixed Deposit Account') {
-            balance = data.balance_fixed_deposit;
-        } else if (data.account_type === 'Checking Account') {
-            balance = data.balance_checking;
-        } else if (data.account_type === 'Non Resident Account') {
-            balance = data.balance_non_resident;
-        } else if (data.account_type === 'Joint Account') {
-            balance = data.balance_joint;
-        } else {
-            balance = 0;
-        }
-    }
-    let account = 0;
-    if (data) {
-        if (data.account_type === 'Savings Account') {
-            account = data.savings_account;
-        } else if (data.account_type === 'Current Account') {
-            account = data.current_account;
-        } else if (data.account_type === 'Fixed Deposit Account') {
-            account = data.fixed_deposit_account;
-        } else if (data.account_type === 'Checking Account') {
-            account = data.checking_account;
-        } else if (data.account_type === 'Non Resident Account') {
-            account = data.non_resident_account;
-        } else if (data.account_type === 'Joint Account') {
-            account = data.joint_account;
-        } else {
-            account = 0;
-        }
-    }
 
     return (
-        <div className='pt-6'>
-            <div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <div className={`pt-6 ${step === 2 ? 'lg:pb-0 pb-[600px]' : ''}`}>
+            <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
+                <div className='flex items-center justify-center gap-3'>
+                    <span className="loading loading-ring loading-lg bg-white"></span>
+                </div>
+            </dialog>
+            <dialog id="local-modal" className="modal">
+                    <div className="modal-box bg-white">
+                        {error && <div className='flex items-center justify-center gap-3'>
+                            <GiCancel size={40} color='#ef4444' />
+                            <p className='text-red-500'>{error}</p>
+                        </div>}
+                        {success && <div className='flex items-center justify-center gap-3'>
+                            <GrStatusGood size={40} color='#22c55e' />
+                            <p className='text-green-500'>{success}</p>
+                        </div>}
+                    </div>
+                </dialog>
+            {step === 1 ? (<div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-semibold mb-6 text-primary">Local Transfer</h3>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={setStepFunc} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Amount (Total Balance: {data ? formatNumber(balance) : formatNumber(0)})</label>
+                        <label className="block text-sm font-medium text-gray-700">Amount (Total Balance: ${data ? formatNumber(data?.balance_current) : formatNumber(0)})</label>
                         <input
                             type="number"
                             value={amount}
@@ -118,21 +163,21 @@ const Local = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Payment Account</label>
                         <select
-                            value={paymentAccount}
+                            value={payment_account}
                             onChange={(e) => setPaymentAccount(e.target.value)}
                             className="mt-1 block w-full p-2 border border-gray-300 bg-[#e2ebf7] rounded-md shadow-sm  sm:text-sm"
                         >
                             <option defaultChecked>Select Payment Account</option>
                             <option>({data ? data?.savings_account : 0}) Savings: ${data ? formatNumber(data?.balance_savings) : formatNumber(0)}</option>
-                            <option>({account}) {data?.account_type}: ${formatNumber(balance)}</option>
+                            <option>({data ? data?.current_account : 0}) Current: ${data ? formatNumber(data?.balance_current) : formatNumber(0)}</option>
                         </select>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Bank Name</label>
                         <input
                             type="text"
-                            value={recipientBank}
-                            onChange={(e) => setRecipientBank(e.target.value)}
+                            value={bank_name}
+                            onChange={(e) => setBankName(e.target.value)}
                             required
                             className="mt-1 bg-[#e2ebf7] focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
                         />
@@ -141,8 +186,8 @@ const Local = () => {
                         <label className="block text-sm font-medium text-gray-700">Account Number</label>
                         <input
                             type="text"
-                            value={recipientAccount}
-                            onChange={(e) => setRecipientAccount(e.target.value)}
+                            value={account_number}
+                            onChange={(e) => setAccountNumber(e.target.value)}
                             required
                             className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-[#e2ebf7] sm:text-sm"
                         />
@@ -151,49 +196,53 @@ const Local = () => {
                         <label className="block text-sm font-medium text-gray-700">Account Name</label>
                         <input
                             type="text"
-                            value={recipientName}
-                            onChange={(e) => setRecipientName(e.target.value)}
+                            value={account_name}
+                            onChange={(e) => setAccountName(e.target.value)}
                             required
                             className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md bg-[#e2ebf7] shadow-sm  sm:text-sm"
                         />
                     </div>
-                    
-                      
-                            
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Details</label>
-                                <textarea
-                                    value={details}
-                                    onChange={(e) => setDetails(e.target.value)}
-                                    required
-                                    placeholder='Reason for transfer'
-                                    rows={5}
-                                    className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 bg-[#e2ebf7] rounded-md shadow-sm  sm:text-sm"
-                                />
-                            </div>
-                     
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Details</label>
+                        <textarea
+                            value={details}
+                            onChange={(e) => setDetails(e.target.value)}
+                            required
+                            placeholder='Reason for transfer'
+                            rows={5}
+                            className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 bg-[#e2ebf7] rounded-md shadow-sm  sm:text-sm"
+                        />
+                    </div>
+
                     <button
                         type="submit"
                         className="w-full py-2 px-4 bg-primary text-white font-semibold rounded-md shadow  focus:outline-none flex items-center justify-center"
                     >
-                        {loading ? <span className="loading loading-spinner loading-sm bg-white"></span>
-                            : "Transfer"}
+                       Transfer
                     </button>
                 </form>
 
-                <dialog id="my_modal_1" className="modal">
-                    <div className="modal-box">
-                        {error && <div className='flex items-center justify-center gap-3'>
-                            <GiCancel size={40} color='#ef4444' />
-                            <p className='text-red-500'>{error}</p>
-                        </div>}
-                        {status && <div className='flex items-center justify-center gap-3'>
-                            <GrStatusGood size={40} color='#22c55e' />
-                            <p className='text-green-500'>{status}</p>
-                        </div>}
+            </div>) : (<div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <h3 className="text-2xl font-semibold mb-6 text-primary">Enter your pincode</h3>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Pincode</label>
+                        <input
+                            type="text"
+                            value={pincode}
+                            onChange={(e) => setPinCode(e.target.value)}
+                            required
+                            className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-[#e2ebf7]  sm:text-sm"
+                        />
                     </div>
-                </dialog>
-            </div>
+                    <button
+                        type="submit"
+                        className="w-full py-2 px-4 bg-primary text-white font-semibold rounded-md shadow  focus:outline-none flex items-center justify-center"
+                    >
+                        Verify Pincode
+                    </button>
+                </form>
+            </div>)}
         </div>
     );
 };

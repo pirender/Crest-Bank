@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import useSWR from "swr";
 import { FaPlus } from "react-icons/fa6";
-import { formatNumber, formatDate } from '../../lib/util';
+import { formatNumber, formatDate, containsTransfer } from '../../lib/util';
 import { FaChevronDown } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
 
@@ -35,49 +35,14 @@ const Main = () => {
         }
     }, [data, user]);
 
-    let inflow = 0;
-    if (data) {
-        inflow = data.transactions.reduce((acc: any, transaction: Transaction) => {
-            return acc + transaction.fields.amount;
-        }, 0)
-    }
+    // let inflow = 0;
+    // if (data) {
+    //     inflow = data.transactions.reduce((acc: any, transaction: Transaction) => {
+    //         return acc + transaction.fields.amount;
+    //     }, 0)
+    // }
 
-    let balance = 0;
-    if (user) {
-        if (user.account_type === 'Savings Account') {
-            balance = user.balance_savings;
-        } else if (user.account_type === 'Current Account') {
-            balance = user.balance_current;
-        } else if (user.account_type === 'Fixed Deposit Account') {
-            balance = user.balance_fixed_deposit;
-        } else if (user.account_type === 'Checking Account') {
-            balance = user.balance_checking;
-        } else if (user.account_type === 'Non Resident Account') {
-            balance = user.balance_non_resident;
-        } else if (user.account_type === 'Joint Account') {
-            balance = user.balance_joint;
-        } else {
-            balance = 0;
-        }
-    }
-    let account = 0;
-    if (user) {
-        if (user.account_type === 'Savings Account') {
-            account = user.savings_account;
-        } else if (user.account_type === 'Current Account') {
-            account = user.current_account;
-        } else if (user.account_type === 'Fixed Deposit Account') {
-            account = user.fixed_deposit_account;
-        } else if (user.account_type === 'Checking Account') {
-            account = user.checking_account;
-        } else if (user.account_type === 'Non Resident Account') {
-            account = user.non_resident_account;
-        } else if (user.account_type === 'Joint Account') {
-            account = user.joint_account;
-        } else {
-            account = 0;
-        }
-    }
+
 
     return (
         <div className='md:pt-6 pt-6 pb-6 md:pb-24'>
@@ -113,7 +78,7 @@ const Main = () => {
                                             <div className='flex justify-between items-center'>
                                                 <p className='text-white text-[14px]'>Balance:</p>
 
-                                                <p className='text-white text-[14px]'>${formatNumber(balance)}</p>
+                                                <p className='text-white text-[14px]'>${formatNumber(user?.balance_current)}</p>
                                             </div>
 
                                             <div className='flex justify-between absolute bottom-[-20px] left-0 right-0 px-4'>
@@ -125,7 +90,7 @@ const Main = () => {
 
                                                     </div>
 
-                                                    <p className='text-green-500 md:text-[14px] sm:text-[12px] text-[70%]'>${formatNumber(inflow)}</p>
+                                                    <p className='text-green-500 md:text-[14px] sm:text-[12px] text-[70%]'>${formatNumber(user?.inflow)}</p>
                                                 </div>
                                                 <div className='bg-white shadow-xl flex flex-col gap-1 w-[40%] p-3 rounded-[8px]'>
                                                     <div className='flex justify-between items-center'>
@@ -135,7 +100,7 @@ const Main = () => {
 
                                                     </div>
 
-                                                    <p className='text-red-500 md:text-[14px] sm:text-[12px] text-[70%]'>$0.00</p>
+                                                    <p className='text-red-500 md:text-[14px] sm:text-[12px] text-[70%]'>${formatNumber(user?.outflow)}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -155,7 +120,7 @@ const Main = () => {
                                             <div className='flex justify-between items-center'>
                                                 <p className='text-gray-500 text-[13px] md:text-[14px]'>Account Balance:</p>
 
-                                                <p className='text-[#2196f3] text-[14px]'>${formatNumber(balance)}</p>
+                                                <p className='text-[#2196f3] text-[14px]'>${formatNumber(user?.balance_current)}</p>
                                             </div>
                                         </div>
                                         {/* middle top */}
@@ -163,7 +128,7 @@ const Main = () => {
                                         <div className='mt-5 px-7 justify-between flex'>
                                             <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#805dca] bg-[#5c1ac32b] md:text-[14px]'>View Details</button>
 
-                                            <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#009688] bg-[#00968830] md:text-[14px]'>Account Details</button>
+                                            <a href='/dashboard/profile' className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#009688] bg-[#00968830] md:text-[14px]'>Account Details</a>
                                         </div>
                                     </div>
                                     {/* top left */}
@@ -200,7 +165,7 @@ const Main = () => {
                                                     </div>
 
                                                     <div>
-                                                        <p className='text-green-500 text-[13px]'>+${formatNumber(data.fields.amount)}</p>
+                                                        <p className={`text-green-500 text-[13px] ${containsTransfer(data.fields.type) ? 'text-red-500' : ''}`}>{containsTransfer(data.fields.type) ? '-$' + formatNumber(data.fields.amount) : '+$' + formatNumber(data.fields.amount)}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -239,11 +204,11 @@ const Main = () => {
                                 </div>
                                 <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-8'>
                                     <div className='flex justify-between items-center'>
-                                        <p className='text-[14px] md:text-[23px] font-semibold'>{user?.account_type}</p>
+                                        <p className='text-[14px] md:text-[23px] font-semibold'>Current Account</p>
                                     </div>
 
                                     <div className='flex items-center'>
-                                        <p className='text-[#e95f2b] text-[14px] md:text-[30px] font-medium'>({account})</p>
+                                        <p className='text-[#2196f3] text-[14px] md:text-[30px] font-medium'>({user ? user?.current_account : 0})</p>
                                     </div>
                                 </div>
                                 <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-8'>
@@ -252,7 +217,7 @@ const Main = () => {
                                     </div>
 
                                     <div className='flex items-center'>
-                                        <p className='text-[#e95f2b] text-[14px] md:text-[30px] font-medium'>({user ? user?.savings_account : 0})</p>
+                                        <p className='text-[#2196f3] text-[14px] md:text-[30px] font-medium'>({user ? user?.savings_account : 0})</p>
                                     </div>
                                 </div>
                             </div>
@@ -293,7 +258,7 @@ const Main = () => {
                                             <div className='flex justify-between items-center'>
                                                 <p className='text-white text-[14px]'>Balance:</p>
 
-                                                <p className='text-white text-[14px]'>${formatNumber(balance)}</p>
+                                                <p className='text-white text-[14px]'>${formatNumber(user?.balance_current)}</p>
                                             </div>
 
                                             <div className='flex justify-between absolute bottom-[-20px] left-0 right-0 px-4'>
@@ -305,7 +270,7 @@ const Main = () => {
 
                                                     </div>
 
-                                                    <p className='text-green-500 md:text-[14px] sm:text-[12px] text-[70%]'>${formatNumber(inflow)}</p>
+                                                    <p className='text-green-500 md:text-[14px] sm:text-[12px] text-[70%]'>${formatNumber(user?.inflow)}</p>
                                                 </div>
                                                 <div className='bg-white shadow-xl flex flex-col gap-1 w-[40%] p-3 rounded-[8px]'>
                                                     <div className='flex justify-between items-center'>
@@ -315,7 +280,7 @@ const Main = () => {
 
                                                     </div>
 
-                                                    <p className='text-red-500 md:text-[14px] sm:text-[12px] text-[70%]'>$0.00</p>
+                                                    <p className='text-red-500 md:text-[14px] sm:text-[12px] text-[70%]'>${formatNumber(user?.outflow)}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -333,9 +298,9 @@ const Main = () => {
                                                 <p className='text-[#2196f3] text-[14px]'>${user ? formatNumber(user?.balance_savings) : formatNumber(0)}</p>
                                             </div>
                                             <div className='flex justify-between items-center'>
-                                                <p className='text-gray-500 text-[13px] md:text-[14px]'>Account Balance</p>
+                                                <p className='text-gray-500 text-[13px] md:text-[14px]'>Current Balance</p>
 
-                                                <p className='text-[#2196f3] text-[14px]'>${formatNumber(balance)}</p>
+                                                <p className='text-[#2196f3] text-[14px]'>${user ? formatNumber(user?.balance_current) : formatNumber(0)}</p>
                                             </div>
                                         </div>
                                         {/* middle top */}
@@ -343,7 +308,7 @@ const Main = () => {
                                         <div className='mt-5 px-7 justify-between flex'>
                                             <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#805dca] bg-[#5c1ac32b] md:text-[14px]'>View Details</button>
 
-                                            <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#009688] bg-[#00968830] md:text-[14px]'>Account Details</button>
+                                            <a href='/dashboard/profile' className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#009688] bg-[#00968830] md:text-[14px]'>Account Details</a>
                                         </div>
                                     </div>
                                     {/* top left */}
@@ -380,7 +345,7 @@ const Main = () => {
                                                     </div>
 
                                                     <div>
-                                                        <p className='text-green-500 text-[13px]'>+${formatNumber(data.fields.amount)}</p>
+                                                        <p className={`text-green-500 text-[13px] ${containsTransfer(data.fields.type) ? 'text-red-500' : ''}`}>{containsTransfer(data.fields.type) ? '-$' + formatNumber(data.fields.amount) : '+$' + formatNumber(data.fields.amount)}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -419,11 +384,11 @@ const Main = () => {
                                 </div>
                                 <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-8'>
                                     <div className='flex justify-between items-center'>
-                                        <p className='text-[14px] md:text-[23px] font-semibold'>{user?.account_type}</p>
+                                        <p className='text-[14px] md:text-[23px] font-semibold'>Current Account</p>
                                     </div>
 
                                     <div className='flex items-center'>
-                                        <p className='text-[#e95f2b] text-[14px] md:text-[30px] font-medium'>({account})</p>
+                                        <p className='text-[#2196f3] text-[14px] md:text-[30px] font-medium'>({user ? user?.current_account : 0})</p>
                                     </div>
                                 </div>
                                 <div className='p-3 bg-white rounded-md md:flex-1 flex flex-col gap-8'>
@@ -432,7 +397,7 @@ const Main = () => {
                                     </div>
 
                                     <div className='flex items-center'>
-                                        <p className='text-[#e95f2b] text-[14px] md:text-[30px] font-medium'>({user ? user?.savings_account : 0})</p>
+                                        <p className='text-[#2196f3] text-[14px] md:text-[30px] font-medium'>({user ? user?.savings_account : 0})</p>
                                     </div>
                                 </div>
                             </div>

@@ -56,7 +56,7 @@ const KYC: React.FC = () => {
       };
 
       // Send KYC data to the server
-      const response = await fetch('http://localhost:3000/api/kyc', {
+      const response = await fetch('/api/kyc', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

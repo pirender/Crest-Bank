@@ -11,6 +11,7 @@ export async function POST(request: Request) {
     try {
        const data = {
             user_id: session.user.id,
+            user_name: session.user.name as string,
             type: type,
             details: details,
        }

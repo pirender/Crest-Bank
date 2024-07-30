@@ -105,7 +105,7 @@ const Savings = () => {
                                         <div className='mt-12 px-7 justify-between flex'>
                                             <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#805dca] bg-[#5c1ac32b] md:text-[14px]'>View Details</button>
 
-                                            <button className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#009688] bg-[#00968830] md:text-[14px]'>Account Details</button>
+                                            <a href='/dashboard/profile' className='text-[13px] py-[6px] px-[11px] rounded-[8px] text-[#009688] bg-[#00968830] md:text-[14px]'>Account Details</a>
                                         </div>
                                     </div>
                                     {/* top left */}
