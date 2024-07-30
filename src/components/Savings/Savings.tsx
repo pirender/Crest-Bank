@@ -41,7 +41,7 @@ const Savings = () => {
     }
 
     return (
-        <div className='py-4 md:pb-24 lg:pb-0 pb-[600px]'>
+        <div className='py-4 lg:pb-0 pb-4'>
             <div className="mycontainer md:hidden">
                 <div className="px-4">
                     <div>

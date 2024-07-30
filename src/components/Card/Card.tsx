@@ -20,7 +20,7 @@ const Card = () => {
     }, [data]);
 
     return (
-        <div className='py-4 md:pb-24 lg:pb-0 pb-[600px]'>
+        <div className='py-4 md:pb-24'>
             <div className="mycontainer">
                 <div className="px-4">
                     <div>

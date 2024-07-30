@@ -100,7 +100,7 @@ const SavingsForm = () => {
     };
 
     return (
-        <div className='py-4 md:pb-24 lg:pb-6 pb-[600px]'>
+        <div className='py-4 lg:pb-6 pb-4'>
             <div className="mycontainer">
                 <div className="px-4">
                     <div className=''>

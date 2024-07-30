@@ -42,7 +42,7 @@ const Settings = () => {
         }
 
         try {
-            const response = await axios.post('https://crestbankplc.vercel.app/api/request-password-change', {
+            const response = await axios.post('/api/request-password-change', {
                 currentPassword,
                 newPassword,
             });
@@ -98,7 +98,7 @@ const Settings = () => {
         setSuccess('');
 
         try {
-            const response = await axios.post('https://crestbankplc.vercel.app/api/verify-password-change', {
+            const response = await axios.post('/api/verify-password-change', {
                 verificationCode,
                 newPassword,
             });
