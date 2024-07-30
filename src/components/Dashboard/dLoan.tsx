@@ -88,7 +88,7 @@ const LoanRequest: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center md:pt-6">
       <dialog id="loan-modal" className="modal">
-        <div className="modal-box">
+        <div className="modal-box bg-white">
           {error && <div className='flex items-center justify-center gap-3'>
             <GiCancel size={40} color='#ef4444' />
             <p className='text-red-500'>{error}</p>

@@ -170,7 +170,7 @@ const Settings = () => {
                             </div>
 
                             <dialog id="my_modal_1" className="modal">
-                                <div className="modal-box">
+                                <div className="modal-box bg-white">
                                     {error && <div className='flex items-center justify-center gap-3'>
                                         <GiCancel size={40} color='#ef4444' />
                                         <p className='text-red-500'>{error}</p>

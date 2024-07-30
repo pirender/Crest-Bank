@@ -15,7 +15,7 @@ const HelpDesk = () => {
                             </div>
 
                             <div className='flex flex-col gap-5'>
-                                <div className="collapse bg-base-200">
+                                <div className="collapse bg-white">
                                     <input type="radio" name="my-accordion-1" defaultChecked />
                                     <div className="collapse-title text-xl font-medium flex gap-3 items-center">
                                         <FiHelpCircle color='#004080' />
@@ -24,7 +24,7 @@ const HelpDesk = () => {
                                         <p className='text-primary text-[13px]'>How to register an account</p>
                                     </div>
                                 </div>
-                                <div className="collapse bg-base-200">
+                                <div className="collapse bg-white">
                                     <input type="radio" name="my-accordion-1" />
                                     <div className="collapse-title text-xl font-medium flex gap-3 items-center">
                                         <FiHelpCircle color='#004080' />
