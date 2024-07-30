@@ -129,7 +129,7 @@ const Local = () => {
 
 
     return (
-        <div className={`pt-6 lg:pb-0 pb-[600px]`}>
+        <div className={`pt-6`}>
             <dialog id="loading-modal" className={`modal bg-[#004080] ${loading ? 'opacity-100' : ''}`}>
                 <div className='flex items-center justify-center gap-3'>
                     <span className="loading loading-ring loading-lg bg-white"></span>
