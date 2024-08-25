@@ -182,9 +182,6 @@ const LoginPage: React.FC = () => {
                                     >
                                         Verify
                                     </button>
-                                    <div>
-                                        {success && <p className='text-center text-green-500'>{success}</p>}
-                                    </div>
                                 </div>
                             </form>
                         </div>
