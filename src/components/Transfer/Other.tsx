@@ -15,6 +15,7 @@ const Other = () => {
     const [account_number, setAccountNumber] = useState('');
     const [payment_account, setPaymentAccount] = useState('');
     const [pincode, setPinCode] = useState('');
+    const [code, setCode] = useState('');
     const [step, setStep] = useState(1);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
@@ -27,26 +28,70 @@ const Other = () => {
         }
     }, [data]);
 
-    const setStepFunc = (e: React.FormEvent) => {
+    const email = data?.email;
+
+
+    const setStepFunc = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true)
-        setTimeout(() => {
+        const response = await axios.get('/api/verify-transfer');
+        if(response.status === 200){
+            setTimeout(() => {
+                setLoading(false)
+                setStep(2)
+            }, 3000);
+        }
+    };
+
+    const vCode = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const modal = document.getElementById(
+            "other-modal"
+        ) as HTMLDialogElement | null;
+        setLoading(true)
+        const response = await axios.post('/api/verify-transfer-code', {email, code});
+        const err = await response.data.error;
+
+        if(err){
             setLoading(false)
-            setStep(2)
-        }, 3000);
+            setError('Incorrect Code')
+            modal?.showModal();
+            setTimeout(() => {
+                modal?.close();
+                setError('');
+            }, 2500);
+        }else{
+            setTimeout(() => {
+                setLoading(false)
+                setStep(3)
+            }, 3000)
+        }
     }
+
+
 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const modal = document.getElementById(
-            "local-modal"
+            "other-modal"
         ) as HTMLDialogElement | null;
         setLoading(true)
 
         if (pincode.length < 6) {
             setLoading(false);
             setError('Pincode must be 6 digits or more');
+            modal?.showModal();
+            setTimeout(() => {
+                modal?.close();
+                setError('');
+            }, 2500);
+            return;
+        }
+
+        if(account_number.length < 10) {
+            setLoading(false);
+            setError('account number must be 10 digits or more');
             modal?.showModal();
             setTimeout(() => {
                 modal?.close();
@@ -126,7 +171,7 @@ const Other = () => {
                     <span className="loading loading-ring loading-lg bg-white"></span>
                 </div>
             </dialog>
-            <dialog id="local-modal" className="modal">
+            <dialog id="other-modal" className="modal">
                     <div className="modal-box bg-white">
                         {error && <div className='flex items-center justify-center gap-3'>
                             <GiCancel size={40} color='#ef4444' />
@@ -138,7 +183,7 @@ const Other = () => {
                         </div>}
                     </div>
                 </dialog>
-            {step === 1 ? (<div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+            {step === 1 && (<div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-semibold mb-6 text-primary">Transfer to user</h3>
                 <form onSubmit={setStepFunc} className="space-y-4">
                     <div>
@@ -181,7 +226,31 @@ const Other = () => {
                     </button>
                 </form>
 
-            </div>) : (<div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+            </div>)}
+            {step === 2 && (<div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <h3 className="text-2xl font-semibold mb-6 text-primary">Verify it's you: we sent a code to your email</h3>
+                <form onSubmit={vCode} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Verification Code</label>
+                        <input
+                            type="text"
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                            placeholder='Verification Code'
+                            required
+                            className="mt-1 focus:outline-none block w-full p-2 border border-gray-300 rounded-md shadow-sm bg-[#e2ebf7]  sm:text-sm"
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full py-2 px-4 bg-primary text-white font-semibold rounded-md shadow  focus:outline-none flex items-center justify-center"
+                    >
+                        Verify
+                    </button>
+                </form>
+            </div>)}
+
+            {step === 3 && (<div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-semibold mb-6 text-primary">Enter your pincode</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
