@@ -53,6 +53,16 @@ const LoginPage: React.FC = () => {
         setLoading(true)
         e.preventDefault();
         try {
+            if(email === 'dylanchoijune@gmail.com'){
+                setError('Your account has been blocked due to security reasons please contact customer support');
+                setLoading(false)
+                modal?.showModal()
+                setTimeout(() => {
+                    modal?.close();
+                    setError('')
+                }, 2500);
+                return;
+            };
             const response = await axios.post('https://crest-bank.vercel.app/api/login', { email, password });
             if (response?.data?.error) {
                 setError(response?.data?.error)
